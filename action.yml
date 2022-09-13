@@ -1,0 +1,9 @@
+name: "auditor"
+description: "A customizable auditor Action for detecting violations in a PR diff"
+author: "Grant Birkinbine"
+branding:
+  icon: "git-branch"
+  color: "gray-dark"
+runs:
+  using: "node16"
+  main: "dist/index.js"
