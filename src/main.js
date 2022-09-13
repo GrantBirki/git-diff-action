@@ -5,7 +5,8 @@
 // import dedent from 'dedent-js'
 
 export async function run() {
-  console.log('Hello, world!')
+  console.log('Hello, world!!')
+  console.log('todo')
 }
 
 run()
