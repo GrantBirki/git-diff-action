@@ -6,7 +6,7 @@ A GitHub Action for gathering the `git diff` of a pull request in JSON format
 
 TODO
 
-## Turbo Quickstardt ⚡
+## Turbo Quickstart ⚡
 
 TODO
 
