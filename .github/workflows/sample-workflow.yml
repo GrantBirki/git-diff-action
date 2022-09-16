@@ -12,6 +12,8 @@ jobs:
     steps:
       # Need to checkout for testing the Action in this repo
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3.0.2
+        with:
+          fetch-depth: 0 # needed to checkout all branches
 
       # Start check the PR diff
       - uses: ./
