@@ -72,3 +72,16 @@ jobs:
       - name: echo raw diff
         run: echo "${{ steps.pr-diff.outputs.diff-raw }}"
 ```
+
+## Inputs 📥
+
+| Input | Required? | Default | Description |
+| ----- | --------- | ------- | ----------- |
+| base_branch | yes | `${{ github.event.pull_request.base.sha }}` | The "base" or "target" branch to use for the git diff |
+
+## Outputs 📤
+
+| Output | Description |
+| ------ | ----------- |
+| diff | The `git diff` of the pull request in JSON format |
+| raw-diff | The raw `git diff` of the pull request |
