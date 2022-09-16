@@ -1,4 +1,4 @@
-name: "sample-workflow"
+name: sample-workflow
 
 on:
   pull_request:
@@ -19,6 +19,10 @@ jobs:
       - uses: ./
         id: pr-diff
 
-      # Print the diff
-      - name: Print the diff
+      # Print the diff in JSON format
+      - name: echo json diff
         run: echo "${{ steps.pr-diff.outputs.diff }}"
+
+      # Print the diff in raw git format
+      - name: echo raw diff
+        run: echo "${{ steps.pr-diff.outputs.diff-raw }}"
