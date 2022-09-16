@@ -1,0 +1,22 @@
+name: "sample-workflow"
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    steps:
+      # Need to checkout for testing the Action in this repo
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v3.0.2
+
+      # Start check the PR diff
+      - uses: ./
+        id: pr-diff
+
+      # Print the diff
+      - name: Print the diff
+        run: echo "${{ steps.pr-diff.outputs.diff }}"
