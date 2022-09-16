@@ -1,4 +1,4 @@
-import {gitDiff} from './functions/diff'
+import {gitDiff} from './functions/git-diff'
 
 export async function run() {
   gitDiff()
