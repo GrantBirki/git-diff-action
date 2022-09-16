@@ -1,6 +1,6 @@
-# auditor 🔍
+# pr-diff 🧭
 
-A customizable auditor Action for detecting violations in a PR diff
+A GitHub Action for gathering the `git diff` of a pull request in JSON format
 
 ## About 💡
 

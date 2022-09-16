@@ -1,8 +1,8 @@
 {
-  "name": "auditor-action",
+  "name": "pr-diff-action",
   "version": "0.0.0",
   "private": true,
-  "description": "A customizable auditor Action for detecting violations in a PR diff",
+  "description": "A GitHub Action for gathering the git diff of a pull request in JSON format",
   "main": "lib/main.js",
   "scripts": {
     "format": "prettier --write '**/*.js'",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GrantBirki/auditor.git"
+    "url": "git+https://github.com/GrantBirki/pr-diff.git"
   },
   "keywords": [
     "actions",
