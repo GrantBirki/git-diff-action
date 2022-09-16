@@ -13,7 +13,3 @@ TODO
 ## Example 📚
 
 TODO
-
-test
-
-test
