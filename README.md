@@ -12,4 +12,4 @@ TODO
 
 ## Example 📚
 
-TODO
+TODO.
