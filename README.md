@@ -1,5 +1,7 @@
 # git-diff-action 📃
 
+[![CodeQL](https://github.com/GrantBirki/git-diff-action/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/GrantBirki/git-diff-action/actions/workflows/codeql-analysis.yml) [![package-check](https://github.com/GrantBirki/git-diff-action/actions/workflows/package-check.yml/badge.svg)](https://github.com/GrantBirki/git-diff-action/actions/workflows/package-check.yml) [![sample-workflow](https://github.com/GrantBirki/git-diff-action/actions/workflows/sample-workflow.yml/badge.svg)](https://github.com/GrantBirki/git-diff-action/actions/workflows/sample-workflow.yml)
+
 A GitHub Action for gathering the `git diff` of a pull request in JSON format or standard `git diff` format
 
 ## About 💡
