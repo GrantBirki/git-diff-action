@@ -1,7 +1,7 @@
 name: sample-workflow
 
 on:
-  ? pull_request
+  pull_request:
 
 permissions:
   contents: read
@@ -33,5 +33,5 @@ jobs:
       - uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
         with:
           name: json-diff
-          path: diff.json
+          path: ./diff.json
           retention-days: 1
