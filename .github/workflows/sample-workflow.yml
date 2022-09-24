@@ -28,8 +28,10 @@ jobs:
           echo $DIFF > ~/diff.json
 
       # Echo the raw git diff
-      # - name: echo raw diff
-      #   run: echo ${{ steps.git-diff.outputs.raw-diff }}
+      - name: echo raw diff
+        env:
+          DIFF: ${{ steps.git-diff.outputs.raw-diff }}
+        run: echo $DIFF
 
       # Upload the json diff as an artifact
       - uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
