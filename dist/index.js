@@ -3175,7 +3175,7 @@ function gitDiff() {
       // JSON diff
       const diff = index_umd_default()(stdout)
       core.debug(JSON.stringify(diff))
-      core.setOutput('diff', JSON.stringify(diff))
+      core.setOutput('json-diff', JSON.stringify(diff))
       return diff
     })
   } catch (e) {
