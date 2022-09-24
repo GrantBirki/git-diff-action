@@ -1,0 +1,29 @@
+{
+    "type": "GitDiff",
+    "files": [
+        {
+            "type": "AddedFile",
+            "chunks": [
+                {
+                    "type": "Chunk",
+                    "toFileRange": {
+                        "start": 1,
+                        "lines": 47
+                    },
+                    "fromFileRange": {
+                        "start": 0,
+                        "lines": 0
+                    },
+                    "changes": [
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 1,
+                            "content": "name: package-check"
+                        }
+                    ]
+                }
+            ],
+            "path": ".github/workflows/package-check.yml"
+        }
+    ]
+}

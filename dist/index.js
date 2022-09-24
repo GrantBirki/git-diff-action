@@ -3157,6 +3157,7 @@ function gitDiff() {
   try {
     // Get the base branch to use for the diff
     const baseBranch = core.getInput('base_branch')
+    core.debug(`base_branch: ${baseBranch}`)
 
     ;(0,external_child_process_namespaceObject.exec)(`git diff ${baseBranch}`, (error, stdout, stderr) => {
       if (error) {
@@ -3175,11 +3176,11 @@ function gitDiff() {
       // JSON diff
       const diff = index_umd_default()(stdout)
       core.debug(JSON.stringify(diff))
-      core.setOutput('diff', JSON.stringify(diff))
+      core.setOutput('json-diff', JSON.stringify(diff))
       return diff
     })
   } catch (e) {
-    core.setFailed(`Error getting git diff: ${e}`)
+    core.setFailed(`error getting git diff: ${e}`)
   }
 }
 

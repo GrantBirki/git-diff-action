@@ -1,6 +1,6 @@
-# git-diff 🧭
+# git-diff 📃
 
-A GitHub Action for gathering the `git diff` of a pull request in JSON format
+A GitHub Action for gathering the `git diff` of a pull request in JSON format or standard `git diff` format
 
 ## About 💡
 
@@ -28,11 +28,15 @@ Checkout the example below to see how you can use this Action in your workflow t
 
       # Print the diff in JSON format
       - name: echo json diff
-        run: echo "${{ steps.git-diff.outputs.diff }}"
+        env:
+          DIFF: ${{ steps.git-diff.outputs.json-diff }}
+        run: echo $DIFF
 
       # Print the diff in raw git format
       - name: echo raw diff
-        run: echo "${{ steps.git-diff.outputs.diff-raw }}"
+        env:
+          DIFF: ${{ steps.git-diff.outputs.raw-diff }}
+        run: echo $DIFF
 ```
 
 > View the section below to see a more detailed example
@@ -66,11 +70,15 @@ jobs:
 
       # Print the diff in JSON format
       - name: echo json diff
-        run: echo "${{ steps.git-diff.outputs.diff }}"
+        env:
+          DIFF: ${{ steps.git-diff.outputs.json-diff }}
+        run: echo $DIFF
 
       # Print the diff in raw git format
       - name: echo raw diff
-        run: echo "${{ steps.git-diff.outputs.diff-raw }}"
+        env:
+          DIFF: ${{ steps.git-diff.outputs.raw-diff }}
+        run: echo $DIFF
 ```
 
 ### JSON Diff Output 📝
@@ -165,5 +173,5 @@ Expand the section below to see an example of the JSON diff output
 
 | Output | Description |
 | ------ | ----------- |
-| diff | The `git diff` of the pull request in JSON format |
+| json-diff | The `git diff` of the pull request in JSON format |
 | raw-diff | The raw `git diff` of the pull request |
