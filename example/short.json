@@ -1,7 +1,4 @@
-import {run} from '../src/main'
-import * as gitDiff from '../src/functions/git-diff'
-
-const SAMPLE_DIFF = {
+{
     "type": "GitDiff",
     "files": [
         {
@@ -30,13 +27,3 @@ const SAMPLE_DIFF = {
         }
     ]
 }
-
-beforeEach(() => {
-    jest.spyOn(gitDiff, 'gitDiff').mockImplementation(() => {
-      return SAMPLE_DIFF
-    })
-  })
-
-test('executes main', async () => {
-  expect(await run()).toStrictEqual(undefined)
-})

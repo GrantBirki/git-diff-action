@@ -1,0 +1,724 @@
+{
+    "type": "GitDiff",
+    "files": [
+        {
+            "type": "AddedFile",
+            "chunks": [
+                {
+                    "type": "Chunk",
+                    "toFileRange": {
+                        "start": 1,
+                        "lines": 47
+                    },
+                    "fromFileRange": {
+                        "start": 0,
+                        "lines": 0
+                    },
+                    "changes": [
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 1,
+                            "content": "name: package-check"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 2,
+                            "content": ""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 3,
+                            "content": "on:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 4,
+                            "content": " push:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 5,
+                            "content": " branches:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 6,
+                            "content": " - main"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 7,
+                            "content": " paths-ignore:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 8,
+                            "content": " - \"**.md\""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 9,
+                            "content": " pull_request:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 10,
+                            "content": " paths-ignore:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 11,
+                            "content": " - \"**.md\""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 12,
+                            "content": " workflow_dispatch:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 13,
+                            "content": ""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 14,
+                            "content": "jobs:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 15,
+                            "content": " package-check:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 16,
+                            "content": " runs-on: ubuntu-latest"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 17,
+                            "content": ""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 18,
+                            "content": " steps:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 19,
+                            "content": " - uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 20,
+                            "content": ""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 21,
+                            "content": " - name: Setup Node.js 18.x"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 22,
+                            "content": " uses: actions/setup-node@2fddd8803e2f5c9604345a0b591c3020ee971a93 # pin@v3.4.1"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 23,
+                            "content": " with:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 24,
+                            "content": " node-version: 18.x"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 25,
+                            "content": " cache: 'npm'"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 26,
+                            "content": ""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 27,
+                            "content": " - name: Install dependencies"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 28,
+                            "content": " run: npm ci"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 29,
+                            "content": ""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 30,
+                            "content": " - name: Rebuild the dist/ directory"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 31,
+                            "content": " run: npm run bundle"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 32,
+                            "content": ""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 33,
+                            "content": " - name: Compare the expected and actual dist/ directories"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 34,
+                            "content": " run: |"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 35,
+                            "content": " if [ \"$(git diff --ignore-space-at-eol dist/ | wc -l)\" -gt \"0\" ]; then"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 36,
+                            "content": " echo \"Detected uncommitted changes after build. See status below:\""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 37,
+                            "content": " git diff"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 38,
+                            "content": " exit 1"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 39,
+                            "content": " fi"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 40,
+                            "content": " id: diff"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 41,
+                            "content": ""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 42,
+                            "content": " # If index.js was different than expected, upload the expected version as an artifact"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 43,
+                            "content": " - uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # pin@v2"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 44,
+                            "content": " if: ${{ failure() && steps.diff.conclusion == 'failure' }}"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 45,
+                            "content": " with:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 46,
+                            "content": " name: dist"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 47,
+                            "content": " path: dist/"
+                        }
+                    ]
+                }
+            ],
+            "path": ".github/workflows/package-check.yml"
+        },
+        {
+            "type": "ChangedFile",
+            "chunks": [
+                {
+                    "type": "Chunk",
+                    "toFileRange": {
+                        "start": 21,
+                        "lines": 21
+                    },
+                    "fromFileRange": {
+                        "start": 21,
+                        "lines": 8
+                    },
+                    "changes": [
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 21,
+                            "lineAfter": 21,
+                            "content": ""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 22,
+                            "lineAfter": 22,
+                            "content": " # Print the diff in JSON format"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 23,
+                            "lineAfter": 23,
+                            "content": " - name: echo json diff"
+                        },
+                        {
+                            "type": "DeletedLine",
+                            "lineBefore": 24,
+                            "content": " run: echo \"${{ steps.git-diff.outputs.diff }}\""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 24,
+                            "content": " env:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 25,
+                            "content": " DIFF: ${{ steps.git-diff.outputs.json-diff }}"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 26,
+                            "content": " run: |"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 27,
+                            "content": " echo $DIFF"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 28,
+                            "content": " echo $DIFF > ~/diff.json"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 25,
+                            "lineAfter": 29,
+                            "content": ""
+                        },
+                        {
+                            "type": "DeletedLine",
+                            "lineBefore": 26,
+                            "content": " # Print the diff in raw git format"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 30,
+                            "content": " # Echo the raw git diff"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 27,
+                            "lineAfter": 31,
+                            "content": " - name: echo raw diff"
+                        },
+                        {
+                            "type": "DeletedLine",
+                            "lineBefore": 28,
+                            "content": " run: echo \"${{ steps.git-diff.outputs.diff-raw }}\""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 32,
+                            "content": " env:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 33,
+                            "content": " DIFF: ${{ steps.git-diff.outputs.raw-diff }}"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 34,
+                            "content": " run: echo $DIFF"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 35,
+                            "content": ""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 36,
+                            "content": " # Upload the json diff as an artifact"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 37,
+                            "content": " - uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 38,
+                            "content": " with:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 39,
+                            "content": " name: json-diff"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 40,
+                            "content": " path: ~/diff.json"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 41,
+                            "content": " retention-days: 1"
+                        }
+                    ]
+                }
+            ],
+            "path": ".github/workflows/sample-workflow.yml"
+        },
+        {
+            "type": "ChangedFile",
+            "chunks": [
+                {
+                    "type": "Chunk",
+                    "toFileRange": {
+                        "start": 1,
+                        "lines": 1
+                    },
+                    "fromFileRange": {
+                        "start": 1,
+                        "lines": 1
+                    },
+                    "changes": [
+                        {
+                            "type": "DeletedLine",
+                            "lineBefore": 1,
+                            "content": "18.9.0"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 1,
+                            "content": "18.7.0"
+                        }
+                    ]
+                }
+            ],
+            "path": ".node-version"
+        },
+        {
+            "type": "ChangedFile",
+            "chunks": [
+                {
+                    "type": "Chunk",
+                    "toFileRange": {
+                        "start": 28,
+                        "lines": 11
+                    },
+                    "fromFileRange": {
+                        "start": 28,
+                        "lines": 11
+                    },
+                    "changes": [
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 28,
+                            "lineAfter": 28,
+                            "content": ""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 29,
+                            "lineAfter": 29,
+                            "content": " # Print the diff in JSON format"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 30,
+                            "lineAfter": 30,
+                            "content": " - name: echo json diff"
+                        },
+                        {
+                            "type": "DeletedLine",
+                            "lineBefore": 31,
+                            "content": " run: echo \"${{ steps.git-diff.outputs.diff }}\""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 31,
+                            "content": " run: echo \"${{ steps.git-diff.outputs.json-diff }}\""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 32,
+                            "lineAfter": 32,
+                            "content": ""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 33,
+                            "lineAfter": 33,
+                            "content": " # Print the diff in raw git format"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 34,
+                            "lineAfter": 34,
+                            "content": " - name: echo raw diff"
+                        },
+                        {
+                            "type": "DeletedLine",
+                            "lineBefore": 35,
+                            "content": " run: echo \"${{ steps.git-diff.outputs.diff-raw }}\""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 35,
+                            "content": " run: echo \"${{ steps.git-diff.outputs.raw-diff }}\""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 36,
+                            "lineAfter": 36,
+                            "content": "```"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 37,
+                            "lineAfter": 37,
+                            "content": ""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 38,
+                            "lineAfter": 38,
+                            "content": "> View the section below to see a more detailed example"
+                        }
+                    ]
+                },
+                {
+                    "type": "Chunk",
+                    "toFileRange": {
+                        "start": 66,
+                        "lines": 11
+                    },
+                    "fromFileRange": {
+                        "start": 66,
+                        "lines": 11
+                    },
+                    "changes": [
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 66,
+                            "lineAfter": 66,
+                            "content": ""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 67,
+                            "lineAfter": 67,
+                            "content": " # Print the diff in JSON format"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 68,
+                            "lineAfter": 68,
+                            "content": " - name: echo json diff"
+                        },
+                        {
+                            "type": "DeletedLine",
+                            "lineBefore": 69,
+                            "content": " run: echo \"${{ steps.git-diff.outputs.diff }}\""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 69,
+                            "content": " run: echo \"${{ steps.git-diff.outputs.json-diff }}\""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 70,
+                            "lineAfter": 70,
+                            "content": ""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 71,
+                            "lineAfter": 71,
+                            "content": " # Print the diff in raw git format"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 72,
+                            "lineAfter": 72,
+                            "content": " - name: echo raw diff"
+                        },
+                        {
+                            "type": "DeletedLine",
+                            "lineBefore": 73,
+                            "content": " run: echo \"${{ steps.git-diff.outputs.diff-raw }}\""
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 73,
+                            "content": " run: echo \"${{ steps.git-diff.outputs.raw-diff }}\""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 74,
+                            "lineAfter": 74,
+                            "content": "```"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 75,
+                            "lineAfter": 75,
+                            "content": ""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 76,
+                            "lineAfter": 76,
+                            "content": "### JSON Diff Output 📝"
+                        }
+                    ]
+                },
+                {
+                    "type": "Chunk",
+                    "toFileRange": {
+                        "start": 165,
+                        "lines": 5
+                    },
+                    "fromFileRange": {
+                        "start": 165,
+                        "lines": 5
+                    },
+                    "changes": [
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 165,
+                            "lineAfter": 165,
+                            "content": ""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 166,
+                            "lineAfter": 166,
+                            "content": "| Output | Description |"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 167,
+                            "lineAfter": 167,
+                            "content": "| ------ | ----------- |"
+                        },
+                        {
+                            "type": "DeletedLine",
+                            "lineBefore": 168,
+                            "content": "| diff | The `git diff` of the pull request in JSON format |"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 168,
+                            "content": "| json-diff | The `git diff` of the pull request in JSON format |"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 169,
+                            "lineAfter": 169,
+                            "content": "| raw-diff | The raw `git diff` of the pull request |"
+                        }
+                    ]
+                }
+            ],
+            "path": "README.md"
+        },
+        {
+            "type": "ChangedFile",
+            "chunks": [
+                {
+                    "type": "Chunk",
+                    "toFileRange": {
+                        "start": 7,
+                        "lines": 7
+                    },
+                    "fromFileRange": {
+                        "start": 7,
+                        "lines": 7
+                    },
+                    "changes": [
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 7,
+                            "lineAfter": 7,
+                            "content": " default: ${{ github.event.pull_request.base.sha }}"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 8,
+                            "lineAfter": 8,
+                            "content": " required: true"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 9,
+                            "lineAfter": 9,
+                            "content": "outputs:"
+                        },
+                        {
+                            "type": "DeletedLine",
+                            "lineBefore": 10,
+                            "content": " diff:"
+                        },
+                        {
+                            "type": "AddedLine",
+                            "lineAfter": 10,
+                            "content": " json-diff:"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 11,
+                            "lineAfter": 11,
+                            "content": " description: \"The `git diff` of the pull request in JSON format\""
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 12,
+                            "lineAfter": 12,
+                            "content": " raw-diff:"
+                        },
+                        {
+                            "type": "UnchangedLine",
+                            "lineBefore": 13,
+                            "lineAfter": 13,
+                            "content": " description: \"The raw `git diff` of the pull request\""
+                        }
+                    ]
+                }
+            ],
+            "path": "action.yml"
+        }
+    ]
+}
