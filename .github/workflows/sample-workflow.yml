@@ -23,6 +23,12 @@ jobs:
       - name: echo json diff
         run: echo "${{ steps.git-diff.outputs.json-diff }}"
 
-      # Print the diff in raw git format
+      # Save the raw diff to a file
       - name: echo raw diff
-        run: echo "${{ steps.git-diff.outputs.raw-diff }}"
+        run: echo "${{ steps.git-diff.outputs.raw-diff }}" > raw-diff.txt
+
+      # Upload the raw diff as an artifact
+      - uses: actions/upload-artifact@v3
+        with:
+          name: raw-diff
+          path: raw-diff.txt
