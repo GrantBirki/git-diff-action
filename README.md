@@ -163,6 +163,8 @@ Expand the section below to see an example of the JSON diff output
 
 </details><br>
 
+> Click [here](example/diff.json) to see an even more detailed example of the JSON diff output
+
 ## Inputs 📥
 
 | Input | Required? | Default | Description |
