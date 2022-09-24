@@ -28,11 +28,11 @@ Checkout the example below to see how you can use this Action in your workflow t
 
       # Print the diff in JSON format
       - name: echo json diff
-        run: echo "${{ steps.git-diff.outputs.diff }}"
+        run: echo "${{ steps.git-diff.outputs.json-diff }}"
 
       # Print the diff in raw git format
       - name: echo raw diff
-        run: echo "${{ steps.git-diff.outputs.diff-raw }}"
+        run: echo "${{ steps.git-diff.outputs.raw-diff }}"
 ```
 
 > View the section below to see a more detailed example
@@ -66,11 +66,11 @@ jobs:
 
       # Print the diff in JSON format
       - name: echo json diff
-        run: echo "${{ steps.git-diff.outputs.diff }}"
+        run: echo "${{ steps.git-diff.outputs.json-diff }}"
 
       # Print the diff in raw git format
       - name: echo raw diff
-        run: echo "${{ steps.git-diff.outputs.diff-raw }}"
+        run: echo "${{ steps.git-diff.outputs.raw-diff }}"
 ```
 
 ### JSON Diff Output 📝

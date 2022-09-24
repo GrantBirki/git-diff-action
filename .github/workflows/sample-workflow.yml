@@ -25,4 +25,4 @@ jobs:
 
       # Print the diff in raw git format
       - name: echo raw diff
-        run: echo "${{ steps.git-diff.outputs.diff-raw }}"
+        run: echo "${{ steps.git-diff.outputs.raw-diff }}"
