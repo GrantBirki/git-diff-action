@@ -21,7 +21,7 @@ jobs:
 
       # Print the diff in JSON format
       - name: echo json diff
-        run: echo "${{ steps.git-diff.outputs.json-diff }}" | jq .
+        run: echo "${{ steps.git-diff.outputs.json-diff }}"
 
       # Print the diff in raw git format
       - name: echo raw diff
