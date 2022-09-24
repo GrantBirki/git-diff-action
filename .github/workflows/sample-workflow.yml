@@ -17,12 +17,12 @@ jobs:
 
       # Start check the PR diff
       - uses: ./
-        id: git-diff
+        id: git-diff-action
 
       # Print the diff in JSON format
       - name: echo json diff
         env:
-          DIFF: ${{ steps.git-diff.outputs.json-diff }}
+          DIFF: ${{ steps.git-diff-action.outputs.json-diff }}
         run: |
           echo $DIFF
           echo $DIFF > ~/diff.json
@@ -30,7 +30,7 @@ jobs:
       # Echo the raw git diff
       - name: echo raw diff
         env:
-          DIFF: ${{ steps.git-diff.outputs.raw-diff }}
+          DIFF: ${{ steps.git-diff-action.outputs.raw-diff }}
         run: echo $DIFF
 
       # Upload the json diff as an artifact

@@ -1,4 +1,4 @@
-# git-diff 📃
+# git-diff-action 📃
 
 A GitHub Action for gathering the `git diff` of a pull request in JSON format or standard `git diff` format
 
@@ -23,19 +23,19 @@ Checkout the example below to see how you can use this Action in your workflow t
           fetch-depth: 0 # needed to checkout all branches for this Action to work
 
       # Check the PR diff using the current branch and the base branch of the PR
-      - uses: GrantBirki/git-diff@vX.X.X
-        id: git-diff
+      - uses: GrantBirki/git-diff-action@vX.X.X
+        id: git-diff-action
 
       # Print the diff in JSON format
       - name: echo json diff
         env:
-          DIFF: ${{ steps.git-diff.outputs.json-diff }}
+          DIFF: ${{ steps.git-diff-action.outputs.json-diff }}
         run: echo $DIFF
 
       # Print the diff in raw git format
       - name: echo raw diff
         env:
-          DIFF: ${{ steps.git-diff.outputs.raw-diff }}
+          DIFF: ${{ steps.git-diff-action.outputs.raw-diff }}
         run: echo $DIFF
 ```
 
@@ -65,19 +65,19 @@ jobs:
           fetch-depth: 0 # needed to checkout all branches for this Action to work
 
       # Check the PR diff using the current branch and the base branch of the PR
-      - uses: GrantBirki/git-diff@vX.X.X
-        id: git-diff
+      - uses: GrantBirki/git-diff-action@vX.X.X
+        id: git-diff-action
 
       # Print the diff in JSON format
       - name: echo json diff
         env:
-          DIFF: ${{ steps.git-diff.outputs.json-diff }}
+          DIFF: ${{ steps.git-diff-action.outputs.json-diff }}
         run: echo $DIFF
 
       # Print the diff in raw git format
       - name: echo raw diff
         env:
-          DIFF: ${{ steps.git-diff.outputs.raw-diff }}
+          DIFF: ${{ steps.git-diff-action.outputs.raw-diff }}
         run: echo $DIFF
 ```
 
