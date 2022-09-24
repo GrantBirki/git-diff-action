@@ -1,4 +1,4 @@
-name: "pr-diff"
+name: "git-diff"
 description: "A GitHub Action for gathering the `git diff` of a pull request in JSON format"
 author: "Grant Birkinbine"
 inputs:

@@ -17,12 +17,12 @@ jobs:
 
       # Start check the PR diff
       - uses: ./
-        id: pr-diff
+        id: git-diff
 
       # Print the diff in JSON format
       - name: echo json diff
-        run: echo "${{ steps.pr-diff.outputs.diff }}"
+        run: echo "${{ steps.git-diff.outputs.diff }}"
 
       # Print the diff in raw git format
       - name: echo raw diff
-        run: echo "${{ steps.pr-diff.outputs.diff-raw }}"
+        run: echo "${{ steps.git-diff.outputs.diff-raw }}"
