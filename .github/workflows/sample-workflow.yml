@@ -21,14 +21,16 @@ jobs:
 
       # Print the diff in JSON format
       - name: echo json diff
-        run: echo "${{ steps.git-diff.outputs.json-diff }}"
+        run: | 
+          echo "${{ steps.git-diff.outputs.json-diff }}"
+          echo "${{ steps.git-diff.outputs.json-diff }}" > diff.json
 
-      # Save the raw diff to a file
-      - name: echo raw diff
-        run: echo "${{ steps.git-diff.outputs.raw-diff }}" > raw-diff.txt
+      # Echo the raw git diff
+      # - name: echo raw diff
+      #   run: echo "${{ steps.git-diff.outputs.raw-diff }}"
 
-      # Upload the raw diff as an artifact
+      # Upload the diff as an artifact
       - uses: actions/upload-artifact@v3
         with:
-          name: raw-diff
-          path: raw-diff.txt
+          name: diff.json
+          path: diff.json
