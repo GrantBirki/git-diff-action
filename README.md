@@ -165,5 +165,5 @@ Expand the section below to see an example of the JSON diff output
 
 | Output | Description |
 | ------ | ----------- |
-| diff | The `git diff` of the pull request in JSON format |
+| json-diff | The `git diff` of the pull request in JSON format |
 | raw-diff | The raw `git diff` of the pull request |

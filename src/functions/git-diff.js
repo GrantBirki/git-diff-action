@@ -27,7 +27,7 @@ export function gitDiff() {
       // JSON diff
       const diff = parseGitDiff(stdout)
       core.debug(JSON.stringify(diff))
-      core.setOutput('diff', JSON.stringify(diff))
+      core.setOutput('json-diff', JSON.stringify(diff))
       return diff
     })
   } catch (e) {

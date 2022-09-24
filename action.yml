@@ -7,7 +7,7 @@ inputs:
     default: ${{ github.event.pull_request.base.sha }}
     required: true
 outputs:
-  diff:
+  json-diff:
     description: "The `git diff` of the pull request in JSON format"
   raw-diff:
     description: "The raw `git diff` of the pull request"
