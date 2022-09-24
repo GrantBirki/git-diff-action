@@ -12,7 +12,7 @@ outputs:
   raw-diff:
     description: "The raw `git diff` of the pull request"
 branding:
-  icon: "git-branch"
+  icon: "file-plus"
   color: "gray-dark"
 runs:
   using: "node16"
