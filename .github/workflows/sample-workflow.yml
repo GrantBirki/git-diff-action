@@ -21,8 +21,15 @@ jobs:
 
       # Print the diff in JSON format
       - name: echo json diff
-        run: echo "${{ steps.git-diff.outputs.json-diff }}"
+        run: echo ${{ steps.git-diff.outputs.json-diff }} > ~/diff.json
 
       # Echo the raw git diff
       # - name: echo raw diff
-      #   run: echo "${{ steps.git-diff.outputs.raw-diff }}"
+      #   run: echo ${{ steps.git-diff.outputs.raw-diff }}
+
+      # Upload the diff as an artifact
+      - uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
+        with:
+          name: json-diff
+          path: ~/diff.json
+          retention-days: 1
