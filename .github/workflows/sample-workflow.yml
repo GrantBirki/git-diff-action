@@ -21,7 +21,9 @@ jobs:
 
       # Print the diff in JSON format
       - name: echo json diff
-        run: echo ${{ steps.git-diff.outputs.json-diff }} > ~/diff.json
+        env:
+          DIFF: ${{ steps.git-diff.outputs.json-diff }}
+        run: echo $DIFF > ~/diff.json
 
       # Echo the raw git diff
       # - name: echo raw diff
