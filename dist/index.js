@@ -3145,7 +3145,10 @@ var index_umd = __nccwpck_require__(92);
 var index_umd_default = /*#__PURE__*/__nccwpck_require__.n(index_umd);
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(747);
 ;// CONCATENATED MODULE: ./src/functions/git-diff.js
+
 
 
 
@@ -3173,10 +3176,27 @@ function gitDiff() {
       core.debug(`raw git diff: ${stdout}`)
       core.setOutput('raw-diff', stdout)
 
+      // Write the raw diff to a file if the path is provided
+      const rawPath = core.getInput('raw_diff_file_output')
+      if (rawPath) {
+        core.debug(`writing raw diff to ${rawPath}`)
+        ;(0,external_fs_.writeFileSync)(rawPath, stdout)
+      }
+
       // JSON diff
       const diff = index_umd_default()(stdout)
       core.debug(JSON.stringify(diff))
-      core.setOutput('json-diff', JSON.stringify(diff))
+
+      const jsonDiff = JSON.stringify(diff)
+      core.setOutput('json-diff', jsonDiff)
+
+      // Write the JSON diff to a file if the path is provided
+      const jsonPath = core.getInput('json_diff_file_output')
+      if (jsonPath) {
+        core.debug(`writing json diff to ${jsonPath}`)
+        ;(0,external_fs_.writeFileSync)(jsonPath, jsonDiff)
+      }
+
       return diff
     })
   } catch (e) {
