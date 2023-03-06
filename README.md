@@ -181,3 +181,5 @@ Expand the section below to see an example of the JSON diff output
 | ------ | ----------- |
 | json-diff | The `git diff` of the pull request in JSON format |
 | raw-diff | The raw `git diff` of the pull request |
+| json-diff-path| The path to the JSON diff file if `json_diff_file_output` was specified |
+| raw-diff-path | The path to the raw diff file if `raw_diff_file_output` was specified |

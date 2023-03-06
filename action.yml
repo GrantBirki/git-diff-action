@@ -19,6 +19,10 @@ outputs:
     description: "The `git diff` of the pull request in JSON format"
   raw-diff:
     description: "The raw `git diff` of the pull request"
+  json-diff-path:
+    description: "The path to the JSON diff file"
+  raw-diff-path:
+    description: "The path to the raw diff file"
 branding:
   icon: "file-plus"
   color: "gray-dark"
