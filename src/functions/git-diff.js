@@ -30,6 +30,7 @@ export function gitDiff() {
       const rawPath = core.getInput('raw_diff_file_output')
       if (rawPath) {
         core.debug(`writing raw diff to ${rawPath}`)
+        core.setOutput('raw-diff-path', rawPath)
         writeFileSync(rawPath, stdout)
       }
 
@@ -44,6 +45,7 @@ export function gitDiff() {
       const jsonPath = core.getInput('json_diff_file_output')
       if (jsonPath) {
         core.debug(`writing json diff to ${jsonPath}`)
+        core.setOutput('json-diff-path', jsonPath)
         writeFileSync(jsonPath, jsonDiff)
       }
 

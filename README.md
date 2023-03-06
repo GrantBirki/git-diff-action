@@ -27,18 +27,21 @@ Checkout the example below to see how you can use this Action in your workflow t
       # Check the PR diff using the current branch and the base branch of the PR
       - uses: GrantBirki/git-diff-action@vX.X.X
         id: git-diff-action
+        with:
+          json_diff_file_output: diff.json
+          raw_diff_file_output: diff.txt
 
       # Print the diff in JSON format
-      - name: echo json diff
+      - name: print json diff
         env:
-          DIFF: ${{ steps.git-diff-action.outputs.json-diff }}
-        run: echo $DIFF
+          DIFF: ${{ steps.git-diff-action.outputs.json-diff-path }}
+        run: cat $DIFF
 
       # Print the diff in raw git format
-      - name: echo raw diff
+      - name: print raw diff
         env:
-          DIFF: ${{ steps.git-diff-action.outputs.raw-diff }}
-        run: echo $DIFF
+          DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
+        run: cat $DIFF
 ```
 
 > View the section below to see a more detailed example
@@ -69,18 +72,21 @@ jobs:
       # Check the PR diff using the current branch and the base branch of the PR
       - uses: GrantBirki/git-diff-action@vX.X.X
         id: git-diff-action
+        with:
+          json_diff_file_output: diff.json
+          raw_diff_file_output: diff.txt
 
       # Print the diff in JSON format
-      - name: echo json diff
+      - name: print json diff
         env:
-          DIFF: ${{ steps.git-diff-action.outputs.json-diff }}
-        run: echo $DIFF
+          DIFF: ${{ steps.git-diff-action.outputs.json-diff-path }}
+        run: cat $DIFF
 
       # Print the diff in raw git format
-      - name: echo raw diff
+      - name: print raw diff
         env:
-          DIFF: ${{ steps.git-diff-action.outputs.raw-diff }}
-        run: echo $DIFF
+          DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
+        run: cat $DIFF
 ```
 
 ### JSON Diff Output 📝
@@ -172,8 +178,8 @@ Expand the section below to see an example of the JSON diff output
 | Input | Required? | Default | Description |
 | ----- | --------- | ------- | ----------- |
 | base_branch | yes | `${{ github.event.pull_request.base.sha }}` | The "base" or "target" branch to use for the git diff |
-| json_diff_file_output | no | - | Optionally write the JSON diff output to a file |
-| raw_diff_file_output | no | - | Optionally write the raw diff output to a file |
+| json_diff_file_output | no | - | Optionally write the JSON diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
+| raw_diff_file_output | no | - | Optionally write the raw diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
 
 ## Outputs 📤
 
@@ -181,3 +187,17 @@ Expand the section below to see an example of the JSON diff output
 | ------ | ----------- |
 | json-diff | The `git diff` of the pull request in JSON format |
 | raw-diff | The raw `git diff` of the pull request |
+| json-diff-path| The path to the JSON diff file if `json_diff_file_output` was specified |
+| raw-diff-path | The path to the raw diff file if `raw_diff_file_output` was specified |
+
+## Known Issues
+
+You should always opt for using the `json_diff_file_output` and `raw_diff_file_output` inputs to write the diff output to a file. This is because the diff output can be quite large and can cause issues with the GitHub Actions API.
+
+If your git diff is too large, you may see an error like this:
+
+```text
+Error: An error occurred trying to start process '/usr/bin/bash' with working directory '/home/runner/work/<repo>/<dir>'. Argument list too long
+```
+
+This is because GitHub Actions can only support argument lists from environment variables up to a certain size. To get around this, it is highly recommended to use the `json_diff_file_output` and `raw_diff_file_output` inputs to write the diff output to a file and then read that file in subsequent steps.

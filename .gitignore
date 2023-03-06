@@ -9,3 +9,5 @@ coverage
 
 # Extra
 tmp
+
+.vscode/
