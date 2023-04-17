@@ -1,13 +1,14 @@
 # Dependency directory
-node_modules
+node_modules/
 
 # Coverage directory used by tools like istanbul
-coverage
+coverage/
 
 # Optional npm cache directory
 .npm
 
 # Extra
-tmp
+tmp/
 
+# Editors
 .vscode/
