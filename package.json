@@ -21,7 +21,8 @@
   "keywords": [
     "actions",
     "git",
-    "diff"
+    "diff",
+    "ci"
   ],
   "author": "Grant Birkinbine",
   "license": "MIT",
