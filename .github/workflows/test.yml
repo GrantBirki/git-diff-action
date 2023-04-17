@@ -1,0 +1,28 @@
+name: test
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'releases/*'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: setup node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version-file: .node-version
+          cache: 'npm'
+
+      - name: install dependencies
+        run: npm ci
+
+      - name: test
+        run: npm run ci-test
