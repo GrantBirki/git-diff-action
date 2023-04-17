@@ -21,20 +21,21 @@ jobs:
       # Start check the PR diff
       - uses: ./
         id: git-diff-action
+        with:
+          json_diff_file_output: diff.json
+          raw_diff_file_output: diff.txt
 
       # Print the diff in JSON format
-      - name: echo json diff
+      - name: print json diff
         env:
-          DIFF: ${{ steps.git-diff-action.outputs.json-diff }}
-        run: |
-          echo $DIFF
-          echo $DIFF > ~/diff.json
+          DIFF: ${{ steps.git-diff-action.outputs.json-diff-path }}
+        run: cat $DIFF
 
       # Echo the raw git diff
-      - name: echo raw diff
+      - name: print raw diff
         env:
-          DIFF: ${{ steps.git-diff-action.outputs.raw-diff }}
-        run: echo $DIFF
+          DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
+        run: cat $DIFF
 
       # Upload the json diff as an artifact
       - uses: actions/upload-artifact@v3
