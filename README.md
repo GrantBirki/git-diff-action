@@ -20,7 +20,7 @@ Checkout the example below to see how you can use this Action in your workflow t
 
 ```yaml
       # Checkout the repo
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # needed to checkout all branches for this Action to work
 
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checkout the repo
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # needed to checkout all branches for this Action to work
 
