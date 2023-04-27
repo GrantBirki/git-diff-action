@@ -177,7 +177,7 @@ Expand the section below to see an example of the JSON diff output
 
 | Input | Required? | Default | Description |
 | ----- | --------- | ------- | ----------- |
-| base_branch | yes | `${{ github.event.pull_request.base.sha }}` | The "base" or "target" branch to use for the git diff |
+| base_branch | yes | `HEAD^1` | The "base" or "target" branch to use for the git diff |
 | json_diff_file_output | no | - | Optionally write the JSON diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
 | raw_diff_file_output | no | - | Optionally write the raw diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
 
