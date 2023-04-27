@@ -190,6 +190,14 @@ Expand the section below to see an example of the JSON diff output
 | json-diff-path| The path to the JSON diff file if `json_diff_file_output` was specified |
 | raw-diff-path | The path to the raw diff file if `raw_diff_file_output` was specified |
 
+## `base_branch` Input
+
+The `base_branch` input is `HEAD^1` by default. This means that the "base" or "target" branch for the git diff will be the branch that the pull request is targeting. For most use cases, it's best to compare the pull request merge commit against its first parent, which will only show changes that the pull request itself introduces.
+
+This option can be changed to any valid git ref, such as a branch name, tag name, or commit hash.
+
+Another common option that can be used in the context of GitHub Actions is `${{ github.event.pull_request.base.sha }}`
+
 ## Known Issues
 
 You should always opt for using the `json_diff_file_output` and `raw_diff_file_output` inputs to write the diff output to a file. This is because the diff output can be quite large and can cause issues with the GitHub Actions API.
