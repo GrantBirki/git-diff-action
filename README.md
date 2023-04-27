@@ -177,7 +177,7 @@ Expand the section below to see an example of the JSON diff output
 
 | Input | Required? | Default | Description |
 | ----- | --------- | ------- | ----------- |
-| base_branch | yes | `${{ github.event.pull_request.base.sha }}` | The "base" or "target" branch to use for the git diff |
+| base_branch | yes | `HEAD^1` | The "base" or "target" branch to use for the git diff |
 | json_diff_file_output | no | - | Optionally write the JSON diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
 | raw_diff_file_output | no | - | Optionally write the raw diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
 
@@ -189,6 +189,14 @@ Expand the section below to see an example of the JSON diff output
 | raw-diff | The raw `git diff` of the pull request |
 | json-diff-path| The path to the JSON diff file if `json_diff_file_output` was specified |
 | raw-diff-path | The path to the raw diff file if `raw_diff_file_output` was specified |
+
+## `base_branch` Input
+
+The `base_branch` input is `HEAD^1` by default. This means that the "base" or "target" branch for the git diff will be the branch that the pull request is targeting. For most use cases, it's best to compare the pull request merge commit against its first parent, which will only show changes that the pull request itself introduces.
+
+This option can be changed to any valid git ref, such as a branch name, tag name, or commit hash.
+
+Another common option that can be used in the context of GitHub Actions is `${{ github.event.pull_request.base.sha }}`
 
 ## Known Issues
 
