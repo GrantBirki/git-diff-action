@@ -3195,6 +3195,7 @@ function gitDiff() {
     core.debug(`search_path: ${searchPath}`)
     const maxBufferSize = parseInt(core.getInput('max_buffer_size'))
     core.debug(`max_buffer_size: ${maxBufferSize}`)
+    const fileOutputOnly = core.getInput('file_output_only') === 'true'
 
     ;(0,external_child_process_namespaceObject.exec)(
       `git diff ${baseBranch} ${searchPath}`,
@@ -3210,8 +3211,11 @@ function gitDiff() {
         }
 
         // Raw diff
-        core.debug(`raw git diff: ${stdout}`)
-        core.setOutput('raw-diff', stdout)
+        if (fileOutputOnly === false) {
+          // only set the output if fileOutputOnly is false
+          core.debug(`raw git diff: ${stdout}`)
+          core.setOutput('raw-diff', stdout)
+        }
 
         // Write the raw diff to a file if the path is provided
         const rawPath = core.getInput('raw_diff_file_output')
@@ -3223,10 +3227,13 @@ function gitDiff() {
 
         // JSON diff
         const diff = index_umd_default()(stdout)
-        core.debug(JSON.stringify(diff))
-
         const jsonDiff = JSON.stringify(diff)
-        core.setOutput('json-diff', jsonDiff)
+
+        // only set the output if fileOutputOnly is false
+        if (fileOutputOnly === false) {
+          core.debug(JSON.stringify(diff))
+          core.setOutput('json-diff', jsonDiff)
+        }
 
         // Write the JSON diff to a file if the path is provided
         const jsonPath = core.getInput('json_diff_file_output')
