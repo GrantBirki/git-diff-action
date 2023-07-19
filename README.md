@@ -30,6 +30,7 @@ Checkout the example below to see how you can use this Action in your workflow t
         with:
           json_diff_file_output: diff.json
           raw_diff_file_output: diff.txt
+          file_output_only: "true"
 
       # Print the diff in JSON format
       - name: print json diff
@@ -75,6 +76,7 @@ jobs:
         with:
           json_diff_file_output: diff.json
           raw_diff_file_output: diff.txt
+          file_output_only: "true"
 
       # Print the diff in JSON format
       - name: print json diff
@@ -177,20 +179,21 @@ Expand the section below to see an example of the JSON diff output
 
 | Input | Required? | Default | Description |
 | ----- | --------- | ------- | ----------- |
-| base_branch | yes | `HEAD^1` | The "base" or "target" branch to use for the git diff |
-| json_diff_file_output | no | - | Optionally write the JSON diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
-| raw_diff_file_output | no | - | Optionally write the raw diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
-| search_path | no | `.` | Optionally limit the scope of the diff operation to a specific sub-path. Useful for limiting scope of the action. |
-| max_buffer_size | no | 1000000 | Maximum output buffer size for call to git binary. Default is 1M, try enlarging this if you have issues with maxBuffer overflow. |
+| `base_branch` | yes | `HEAD^1` | The "base" or "target" branch to use for the git diff |
+| `json_diff_file_output` | no | - | Optionally write the JSON diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
+| `raw_diff_file_output` | no | - | Optionally write the raw diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
+| `file_output_only` | no | `"false"` | Only use file related outputs and do not print any diffs to console / loggers. **highly recommended** |
+| `search_path` | no | `.` | Optionally limit the scope of the diff operation to a specific sub-path. Useful for limiting scope of the action. |
+| `max_buffer_size` | no | `"1000000"` | Maximum output buffer size for call to git binary. Default is 1M, try increasing this value if you have issues with maxBuffer overflow. This value is technically a string but it gets converted to an integer. |
 
 ## Outputs 📤
 
 | Output | Description |
 | ------ | ----------- |
-| json-diff | The `git diff` of the pull request in JSON format |
-| raw-diff | The raw `git diff` of the pull request |
-| json-diff-path| The path to the JSON diff file if `json_diff_file_output` was specified |
-| raw-diff-path | The path to the raw diff file if `raw_diff_file_output` was specified |
+| `json-diff` | The `git diff` of the pull request in JSON format |
+| `raw-diff` | The raw `git diff` of the pull request |
+| `json-diff-path` | The path to the JSON diff file if `json_diff_file_output` was specified |
+| `raw-diff-path` | The path to the raw diff file if `raw_diff_file_output` was specified |
 
 ## `base_branch` Input
 
@@ -219,7 +222,7 @@ search_path: src/
 
 ## Known Issues
 
-You should always opt for using the `json_diff_file_output` and `raw_diff_file_output` inputs to write the diff output to a file. This is because the diff output can be quite large and can cause issues with the GitHub Actions API.
+You should always opt for using the `json_diff_file_output`, `raw_diff_file_output`, and `file_output_only` (set to `"true"`) inputs to write the diff output to a file. This is because the diff output can be quite large and can cause issues with the GitHub Actions API.
 
 If your git diff is too large, you may see an error like this:
 
@@ -228,3 +231,23 @@ Error: An error occurred trying to start process '/usr/bin/bash' with working di
 ```
 
 This is because GitHub Actions can only support argument lists from environment variables up to a certain size. To get around this, it is highly recommended to use the `json_diff_file_output` and `raw_diff_file_output` inputs to write the diff output to a file and then read that file in subsequent steps.
+
+Setting `file_output_only: "true"` can also help avoid any sort of memory issues that could occur in GitHub Actions runners if they try to log massive diffs to the console.
+
+The TL;DR of this section, is that you should really just be using file based outputs to avoid issues that can occur when printing huge amounts of text to the console with Action runners.
+
+Here is an example with the suggested configuration options explicitly set:
+
+```yaml
+- uses: GrantBirki/git-diff-action@vX.X.X
+  id: git-diff-action
+  with:
+    base_branch: HEAD^1 # compare the PR merge commit against its first parent
+    json_diff_file_output: diff.json # write the JSON diff output to a file called 'diff.json'
+    raw_diff_file_output: diff.txt # write the raw diff output to a file called 'diff.txt' (just in case)
+    file_output_only: "true" # do not print any diff output to the console (safety first)
+    search_path: '.' # look in the entire repo for changes
+    max_buffer_size: "1000000" # the default git diff buffer size, increase if you have issues
+```
+
+Now your configuration is pretty much self-documenting and you can easily see what the Action is doing

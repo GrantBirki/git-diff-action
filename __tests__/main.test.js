@@ -35,6 +35,11 @@ beforeEach(() => {
   jest.spyOn(gitDiff, 'gitDiff').mockImplementation(() => {
     return SAMPLE_DIFF
   })
+
+  process.env.INPUT_BASE_BRANCH = 'HEAD^1'
+  process.env.INPUT_SEARCH_PATH = '.'
+  process.env.INPUT_MAX_BUFFER_SIZE = '1000000'
+  process.env.INPUT_FILE_OUTPUT_ONLY = 'false'
 })
 
 test('executes main', async () => {
