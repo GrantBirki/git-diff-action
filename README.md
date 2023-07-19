@@ -30,6 +30,7 @@ Checkout the example below to see how you can use this Action in your workflow t
         with:
           json_diff_file_output: diff.json
           raw_diff_file_output: diff.txt
+          file_output_only: "true"
 
       # Print the diff in JSON format
       - name: print json diff
@@ -75,6 +76,7 @@ jobs:
         with:
           json_diff_file_output: diff.json
           raw_diff_file_output: diff.txt
+          file_output_only: "true"
 
       # Print the diff in JSON format
       - name: print json diff
@@ -233,3 +235,19 @@ This is because GitHub Actions can only support argument lists from environment 
 Setting `file_output_only: "true"` can also help avoid any sort of memory issues that could occur in GitHub Actions runners if they try to log massive diffs to the console.
 
 The TL;DR of this section, is that you should really just be using file based outputs to avoid issues that can occur when printing huge amounts of text to the console with Action runners.
+
+Here is an example with the suggested configuration options explicitly set:
+
+```yaml
+- uses: GrantBirki/git-diff-action@vX.X.X
+  id: git-diff-action
+  with:
+    base_branch: HEAD^1 # compare the PR merge commit against its first parent
+    json_diff_file_output: diff.json # write the JSON diff output to a file called 'diff.json'
+    raw_diff_file_output: diff.txt # write the raw diff output to a file called 'diff.txt' (just in case)
+    file_output_only: "true" # do not print any diff output to the console (safety first)
+    search_path: '.' # look in the entire repo for changes
+    max_buffer_size: "1000000" # the default git diff buffer size, increase if you have issues
+```
+
+Now your configuration is pretty much self-documenting and you can easily see what the Action is doing
