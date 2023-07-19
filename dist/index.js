@@ -3193,7 +3193,7 @@ function gitDiff() {
     core.debug(`base_branch: ${baseBranch}`)
     const searchPath = core.getInput('search_path')
     core.debug(`search_path: ${searchPath}`)
-    const maxBufferSize = core.getInput('max_buffer_size')
+    const maxBufferSize = parseInt(core.getInput('max_buffer_size'))
     core.debug(`max_buffer_size: ${maxBufferSize}`)
 
     ;(0,external_child_process_namespaceObject.exec)(
