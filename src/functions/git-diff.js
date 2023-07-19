@@ -13,8 +13,10 @@ export function gitDiff() {
     core.debug(`base_branch: ${baseBranch}`)
     const searchPath = core.getInput('search_path')
     core.debug(`search_path: ${searchPath}`)
+    const maxBufferSize = core.getInput('max_buffer_size')
+    core.debug(`max_buffer_size: ${maxBufferSize}`)
 
-    exec(`git diff ${baseBranch} ${searchPath}`, (error, stdout, stderr) => {
+    exec(`git diff ${baseBranch} ${searchPath}`, {maxBuffer: maxBufferSize}, (error, stdout, stderr) => {
       if (error) {
         core.setFailed(`git diff error: ${error.message}`)
         return

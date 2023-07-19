@@ -181,6 +181,7 @@ Expand the section below to see an example of the JSON diff output
 | json_diff_file_output | no | - | Optionally write the JSON diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
 | raw_diff_file_output | no | - | Optionally write the raw diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
 | search_path | no | `.` | Optionally limit the scope of the diff operation to a specific sub-path. Useful for limiting scope of the action. |
+| max_buffer_size | no | 1000000 | Maximum output buffer size for call to git binary. Default is 1M, try enlarging this if you have issues with maxBuffer overflow. |
 
 ## Outputs 📤
 
@@ -198,6 +199,23 @@ The `base_branch` input is `HEAD^1` by default. This means that the "base" or "t
 This option can be changed to any valid git ref, such as a branch name, tag name, or commit hash.
 
 Another common option that can be used in the context of GitHub Actions is `${{ github.event.pull_request.base.sha }}`
+
+## `search_path` Input
+
+The `search_path` input is `.` by default. This means that the working directory (base of the repository) is in-scope for the git diff command.
+
+If you want to limit the scope of the `git diff` command you can specify a subfolder, subpath or file glob in it's place. Here are some examples:
+
+```yaml
+# Only look in files called CHANGELOG.md
+search_path: '**/CHANGELOG.md'
+
+# Only search in YAML files
+search_path: '**/*.yaml'
+
+# Only look in the src/ directory
+search_path: src/
+```
 
 ## Known Issues
 

@@ -18,6 +18,10 @@ inputs:
     description: Optionally limit the scope of the diff operation to a specific sub-path
     default: '.'
     required: false
+  max_buffer_size:
+    description: Maximum output buffer size. Defaults to 1M, try enlarging if you have issues
+    default: 1000000
+    required: false
 outputs:
   json-diff:
     description: "The `git diff` of the pull request in JSON format"
