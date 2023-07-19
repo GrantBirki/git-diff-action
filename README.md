@@ -181,7 +181,7 @@ Expand the section below to see an example of the JSON diff output
 | `json_diff_file_output` | no | - | Optionally write the JSON diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
 | `raw_diff_file_output` | no | - | Optionally write the raw diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
 | `search_path` | no | `.` | Optionally limit the scope of the diff operation to a specific sub-path. Useful for limiting scope of the action. |
-| `max_buffer_size` | no | `1000000` | Maximum output buffer size for call to git binary. Default is 1M, try increasing this value if you have issues with maxBuffer overflow. |
+| `max_buffer_size` | no | `"1000000"` | Maximum output buffer size for call to git binary. Default is 1M, try increasing this value if you have issues with maxBuffer overflow. This value is technically a string but it gets converted to an integer. |
 
 ## Outputs 📤
 
