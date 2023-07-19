@@ -180,6 +180,7 @@ Expand the section below to see an example of the JSON diff output
 | `base_branch` | yes | `HEAD^1` | The "base" or "target" branch to use for the git diff |
 | `json_diff_file_output` | no | - | Optionally write the JSON diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
 | `raw_diff_file_output` | no | - | Optionally write the raw diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
+| `file_output_only` | no | `"false"` | Only use file related outputs and do not print any diffs to console / loggers. **highly recommended** |
 | `search_path` | no | `.` | Optionally limit the scope of the diff operation to a specific sub-path. Useful for limiting scope of the action. |
 | `max_buffer_size` | no | `"1000000"` | Maximum output buffer size for call to git binary. Default is 1M, try increasing this value if you have issues with maxBuffer overflow. This value is technically a string but it gets converted to an integer. |
 
@@ -219,7 +220,7 @@ search_path: src/
 
 ## Known Issues
 
-You should always opt for using the `json_diff_file_output` and `raw_diff_file_output` inputs to write the diff output to a file. This is because the diff output can be quite large and can cause issues with the GitHub Actions API.
+You should always opt for using the `json_diff_file_output`, `raw_diff_file_output`, and `file_output_only` (set to `"true"`) inputs to write the diff output to a file. This is because the diff output can be quite large and can cause issues with the GitHub Actions API.
 
 If your git diff is too large, you may see an error like this:
 
@@ -228,3 +229,7 @@ Error: An error occurred trying to start process '/usr/bin/bash' with working di
 ```
 
 This is because GitHub Actions can only support argument lists from environment variables up to a certain size. To get around this, it is highly recommended to use the `json_diff_file_output` and `raw_diff_file_output` inputs to write the diff output to a file and then read that file in subsequent steps.
+
+Setting `file_output_only: "true"` can also help avoid any sort of memory issues that could occur in GitHub Actions runners if they try to log massive diffs to the console.
+
+The TL;DR of this section, is that you should really just be using file based outputs to avoid issues that can occur when printing huge amounts of text to the console with Action runners.

@@ -14,6 +14,10 @@ inputs:
     description: Optionally write the raw diff output to a file
     default: ""
     required: false
+  file_output_only:
+    description: Only use file related outputs and do not print any diffs to console / loggers
+    default: 'false'
+    required: false
   search_path:
     description: Optionally limit the scope of the diff operation to a specific sub-path
     default: '.'
