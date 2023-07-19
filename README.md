@@ -177,20 +177,20 @@ Expand the section below to see an example of the JSON diff output
 
 | Input | Required? | Default | Description |
 | ----- | --------- | ------- | ----------- |
-| base_branch | yes | `HEAD^1` | The "base" or "target" branch to use for the git diff |
-| json_diff_file_output | no | - | Optionally write the JSON diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
-| raw_diff_file_output | no | - | Optionally write the raw diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
-| search_path | no | `.` | Optionally limit the scope of the diff operation to a specific sub-path. Useful for limiting scope of the action. |
-| max_buffer_size | no | 1000000 | Maximum output buffer size for call to git binary. Default is 1M, try enlarging this if you have issues with maxBuffer overflow. |
+| `base_branch` | yes | `HEAD^1` | The "base" or "target" branch to use for the git diff |
+| `json_diff_file_output` | no | - | Optionally write the JSON diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
+| `raw_diff_file_output` | no | - | Optionally write the raw diff output to a file. This is a string to the file path you wish to write to. **highly recommended** |
+| `search_path` | no | `.` | Optionally limit the scope of the diff operation to a specific sub-path. Useful for limiting scope of the action. |
+| `max_buffer_size` | no | `1000000` | Maximum output buffer size for call to git binary. Default is 1M, try increasing this value if you have issues with maxBuffer overflow. |
 
 ## Outputs 📤
 
 | Output | Description |
 | ------ | ----------- |
-| json-diff | The `git diff` of the pull request in JSON format |
-| raw-diff | The raw `git diff` of the pull request |
-| json-diff-path| The path to the JSON diff file if `json_diff_file_output` was specified |
-| raw-diff-path | The path to the raw diff file if `raw_diff_file_output` was specified |
+| `json-diff` | The `git diff` of the pull request in JSON format |
+| `raw-diff` | The raw `git diff` of the pull request |
+| `json-diff-path` | The path to the JSON diff file if `json_diff_file_output` was specified |
+| `raw-diff-path` | The path to the raw diff file if `raw_diff_file_output` was specified |
 
 ## `base_branch` Input
 
