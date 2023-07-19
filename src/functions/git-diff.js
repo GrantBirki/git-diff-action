@@ -11,8 +11,10 @@ export function gitDiff() {
     // Get the base branch to use for the diff
     const baseBranch = core.getInput('base_branch')
     core.debug(`base_branch: ${baseBranch}`)
+    const searchPath = core.getInput('search_path')
+    core.debug(`search_path: ${searchPath}`)
 
-    exec(`git diff ${baseBranch}`, (error, stdout, stderr) => {
+    exec(`git diff ${baseBranch} ${searchPath}`, (error, stdout, stderr) => {
       if (error) {
         core.setFailed(`git diff error: ${error.message}`)
         return
