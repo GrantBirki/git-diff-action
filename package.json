@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "A GitHub Action for gathering the git diff of a pull request in JSON format",
-  "main": "lib/main.js",
+  "main": "src/main.js",
   "scripts": {
     "format": "prettier --write '**/*.js'",
     "format-check": "prettier --check '**/*.js'",
