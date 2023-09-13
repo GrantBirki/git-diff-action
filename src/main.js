@@ -4,4 +4,6 @@ export async function run() {
   gitDiff()
 }
 
-run()
+if (process.env.ACTION_JEST_TEST !== 'true') {
+  run()
+}
