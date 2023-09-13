@@ -13,9 +13,20 @@ export function gitDiff() {
     core.debug(`base_branch: ${baseBranch}`)
     const searchPath = core.getInput('search_path')
     core.debug(`search_path: ${searchPath}`)
-    const maxBufferSize = parseInt(core.getInput('max_buffer_size'))
+    const maxBufferSizeInput = parseInt(core.getInput('max_buffer_size'))
     core.debug(`max_buffer_size: ${maxBufferSize}`)
     const fileOutputOnly = core.getInput('file_output_only') === 'true'
+
+    // if max_buffer_size is not defined, just use the default
+    var maxBufferSize = maxBufferSizeInput
+    if (
+      isNaN(maxBufferSizeInput) ||
+      maxBufferSizeInput === null ||
+      maxBufferSizeInput === undefined
+    ) {
+      core.info('max_buffer_size is not defined, using default of 1000000')
+      maxBufferSize = 1000000
+    }
 
     exec(
       `git diff ${baseBranch} ${searchPath}`,
