@@ -23,7 +23,7 @@ inputs:
     default: '.'
     required: false
   max_buffer_size:
-    description: Maximum output buffer size. Defaults to 1M, try increasing if you have issues. This value is technically a string but it gets converted to an integer.
+    description: Maximum output buffer size. Defaults to 10M, try increasing if you have issues. This value is technically a string but it gets converted to an integer.
     default: "10000000"
     required: false
 outputs:
