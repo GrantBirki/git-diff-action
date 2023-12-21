@@ -719,6 +719,28 @@
                 }
             ],
             "path": "action.yml"
+        },
+        {
+            "type": "DeletedFile",
+            "chunks": [
+                {
+                    "type": "BinaryFilesChunk",
+                    "pathBefore": "vendor/cache/coolgem-1.0.0.gem",
+                    "pathAfter": "/dev/null"
+                }
+            ],
+            "path": "vendor/cache/coolgem-1.0.0.gem"
+        },
+        {
+            "type": "AddedFile",
+            "chunks": [
+                {
+                    "type": "BinaryFilesChunk",
+                    "pathBefore": "/dev/null",
+                    "pathAfter": "vendor/cache/coolgem-1.1.0.gem"
+                }
+            ],
+            "path": "vendor/cache/coolgem-1.1.0.gem"
         }
     ]
 }
