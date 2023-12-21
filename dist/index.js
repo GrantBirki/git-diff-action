@@ -26384,10 +26384,10 @@ function gitDiff() {
           return
         }
 
-        // Raw diff
+        // only log the raw diff if the Action is explicitly set to run in debug mode
+        core.debug(`raw git diff: ${stdout}`)
         if (fileOutputOnly === false) {
           // only set the output if fileOutputOnly is false
-          core.debug(`raw git diff: ${stdout}`)
           core.setOutput('raw-diff', stdout)
         }
 
@@ -26403,9 +26403,11 @@ function gitDiff() {
         const diff = mjs(stdout)
         const jsonDiff = JSON.stringify(diff)
 
+        // only log the json diff if the Action is explicitly set to run in debug mode
+        core.debug(JSON.stringify(diff))
+
         // only set the output if fileOutputOnly is false
         if (fileOutputOnly === false) {
-          core.debug(JSON.stringify(diff))
           core.setOutput('json-diff', jsonDiff)
         }
 
