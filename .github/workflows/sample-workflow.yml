@@ -38,7 +38,7 @@ jobs:
         run: cat $DIFF
 
       # Upload the json diff as an artifact
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: json-diff
           path: ~/diff.json
