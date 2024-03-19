@@ -51,8 +51,13 @@ test('executes gitDiff', async () => {
   )
   expect(results.files[0].chunks[0].changes[2].type).toBe('DeletedLine')
 
-  expect(infoMock).toHaveBeenCalledWith('total files changed (raw diff): 5')
-  expect(infoMock).toHaveBeenCalledWith('total files changed (json diff): 5')
+  expect(infoMock).toHaveBeenCalledWith('🏃 starting the git-diff-action')
+  expect(infoMock).toHaveBeenCalledWith(
+    '🧮 total detected files changed (raw diff): 5'
+  )
+  expect(infoMock).toHaveBeenCalledWith(
+    '🧮 total detected files changed (json diff): 5'
+  )
 })
 
 test('executes gitDiff with binary files', async () => {
@@ -76,11 +81,16 @@ test('executes gitDiff with binary files', async () => {
   expect(results.files[0].chunks[0].changes[2].type).toBe('DeletedLine')
 
   expect(results.files.length).toBe(7)
+  expect(infoMock).toHaveBeenCalledWith('🏃 starting the git-diff-action')
   expect(infoMock).toHaveBeenCalledWith(
-    'reading git diff from file: __tests__/fixtures/with-binary-files.diff'
+    '📂 reading git diff from file: __tests__/fixtures/with-binary-files.diff'
   )
-  expect(infoMock).toHaveBeenCalledWith('total files changed (raw diff): 7')
-  expect(infoMock).toHaveBeenCalledWith('total files changed (json diff): 7')
+  expect(infoMock).toHaveBeenCalledWith(
+    '🧮 total detected files changed (raw diff): 7'
+  )
+  expect(infoMock).toHaveBeenCalledWith(
+    '🧮 total detected files changed (json diff): 7'
+  )
 })
 
 // this test case is a bug test
@@ -99,13 +109,18 @@ test('executes gitDiff with binary files and --binary flag and breaks (bug test)
   expect(lastFile.path).toBe('kv-cache.js')
 
   expect(results.files.length).toBe(4)
+  expect(infoMock).toHaveBeenCalledWith('🏃 starting the git-diff-action')
   expect(infoMock).toHaveBeenCalledWith(
-    'reading git diff from file: __tests__/fixtures/with-binary-files-and-binary-flag.diff'
+    '📂 reading git diff from file: __tests__/fixtures/with-binary-files-and-binary-flag.diff'
   )
 
   // note that the total files changed is 7, but the json diff only has 4 files
-  expect(infoMock).toHaveBeenCalledWith('total files changed (raw diff): 7')
-  expect(infoMock).toHaveBeenCalledWith('total files changed (json diff): 4')
+  expect(infoMock).toHaveBeenCalledWith(
+    '🧮 total detected files changed (raw diff): 7'
+  )
+  expect(infoMock).toHaveBeenCalledWith(
+    '🧮 total detected files changed (json diff): 4'
+  )
 })
 
 test('executes gitDiff by using the git binary', async () => {
@@ -150,8 +165,12 @@ test('executes gitDiff by using the git binary', async () => {
   expect(infoMock).toHaveBeenCalledWith(
     'max_buffer_size is not defined, using default of 1000000'
   )
-  expect(infoMock).toHaveBeenCalledWith('total files changed (raw diff): 5')
-  expect(infoMock).toHaveBeenCalledWith('total files changed (json diff): 5')
+  expect(infoMock).toHaveBeenCalledWith(
+    '🧮 total detected files changed (raw diff): 5'
+  )
+  expect(infoMock).toHaveBeenCalledWith(
+    '🧮 total detected files changed (json diff): 5'
+  )
   expect(debugMock).toHaveBeenCalledWith(
     'running git diff command: git --no-pager diff --no-color --full-index HEAD^1 .'
   )
