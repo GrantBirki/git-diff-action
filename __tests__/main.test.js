@@ -34,7 +34,9 @@ test('executes gitDiff with binary files', async () => {
   expect(lastFile.path).toBe('utils/cache-machine.mjs')
 
   expect(results.files.length).toBe(7)
-  expect(infoMock).toHaveBeenCalledWith('reading git diff from file: __tests__/fixtures/with-binary-files.diff')
+  expect(infoMock).toHaveBeenCalledWith(
+    'reading git diff from file: __tests__/fixtures/with-binary-files.diff'
+  )
   expect(infoMock).toHaveBeenCalledWith('total files changed (raw diff): 7')
   expect(infoMock).toHaveBeenCalledWith('total files changed (json diff): 7')
 })
@@ -43,14 +45,17 @@ test('executes gitDiff with binary files', async () => {
 // there is an issue with the 'parseGitDiff' library where if the --binary flag is used, it will break the parsing
 // it will still return "some" results, but it will break the parsing and return an incomplete set of results
 test('executes gitDiff with binary files and --binary flag and breaks (bug test)', async () => {
-  process.env.INPUT_GIT_DIFF_FILE = '__tests__/fixtures/with-binary-files-and-binary-flag.diff'
+  process.env.INPUT_GIT_DIFF_FILE =
+    '__tests__/fixtures/with-binary-files-and-binary-flag.diff'
   const results = await gitDiff()
 
   const lastFile = results.files[results.files.length - 1]
   expect(lastFile.path).toBe('kv-cache.js')
 
   expect(results.files.length).toBe(4)
-  expect(infoMock).toHaveBeenCalledWith('reading git diff from file: __tests__/fixtures/with-binary-files-and-binary-flag.diff')
+  expect(infoMock).toHaveBeenCalledWith(
+    'reading git diff from file: __tests__/fixtures/with-binary-files-and-binary-flag.diff'
+  )
 
   // note that the total files changed is 7, but the json diff only has 4 files
   expect(infoMock).toHaveBeenCalledWith('total files changed (raw diff): 7')

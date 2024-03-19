@@ -27023,12 +27023,9 @@ async function gitDiff() {
 
     var gitDiff
 
+    core.debug(`git_diff_file: ${gitDiffFile}`)
     // If git_diff_file is provided, read the file and return the diff
-    if (
-      gitDiffFile !== '' ||
-      gitDiffFile !== null ||
-      gitDiffFile !== undefined
-    ) {
+    if (gitDiffFile !== 'false') {
       core.info(`reading git diff from file: ${gitDiffFile}`)
       gitDiff = (0,external_fs_.readFileSync)(gitDiffFile, 'utf8')
     } else {
