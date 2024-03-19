@@ -26992,6 +26992,8 @@ function getFilePath(ctx, input, type) {
 //# sourceMappingURL=index.js.map
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");
+// EXTERNAL MODULE: external "util"
+var external_util_ = __nccwpck_require__(3837);
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(7147);
 ;// CONCATENATED MODULE: ./src/functions/git-diff.js
@@ -27000,11 +27002,14 @@ var external_fs_ = __nccwpck_require__(7147);
 
 
 
+
 // Helper function to get the diff from the git command
 // :returns: The diff object which is parsed git diff
 // If an error occurs, setFailed is called and it returns null
-function gitDiff() {
+async function gitDiff() {
   try {
+    const execAsync = (0,external_util_.promisify)(external_child_process_namespaceObject.exec)
+
     // Get the base branch to use for the diff
     const baseBranch = core.getInput('base_branch')
     core.debug(`base_branch: ${baseBranch}`)
@@ -27013,69 +27018,96 @@ function gitDiff() {
     const maxBufferSizeInput = parseInt(core.getInput('max_buffer_size'))
     core.debug(`max_buffer_size: ${maxBufferSize}`)
     const fileOutputOnly = core.getInput('file_output_only') === 'true'
+    const gitOptions = core.getInput('git_options')
+    core.debug(`git_options: ${gitOptions}`)
+    const gitDiffFile = core.getInput('git_diff_file')
+    core.debug(`git_diff_file: ${gitDiffFile}`)
 
-    // if max_buffer_size is not defined, just use the default
-    var maxBufferSize = maxBufferSizeInput
-    if (
-      isNaN(maxBufferSizeInput) ||
-      maxBufferSizeInput === null ||
-      maxBufferSizeInput === undefined
-    ) {
-      core.info('max_buffer_size is not defined, using default of 1000000')
-      maxBufferSize = 1000000
+    var gitDiff
+
+    core.debug(`git_diff_file: ${gitDiffFile}`)
+    // If git_diff_file is provided, read the file and return the diff
+    if (gitDiffFile !== 'false') {
+      core.info(`reading git diff from file: ${gitDiffFile}`)
+      gitDiff = (0,external_fs_.readFileSync)(gitDiffFile, 'utf8')
+    } else {
+      // if max_buffer_size is not defined, just use the default
+      var maxBufferSize = maxBufferSizeInput
+      if (
+        isNaN(maxBufferSizeInput) ||
+        maxBufferSizeInput === null ||
+        maxBufferSizeInput === undefined
+      ) {
+        core.info('max_buffer_size is not defined, using default of 1000000')
+        maxBufferSize = 1000000
+      }
+
+      if (gitOptions.includes('--binary')) {
+        core.warning(
+          `--binary flag is set, this may cause unexpected issues with the diff`
+        )
+      }
+
+      // --no-pager ensures that the git command does not use a pager (like less) to display the diff
+      const gitDiffCmd = `git --no-pager diff ${gitOptions} ${baseBranch} ${searchPath}`
+      core.debug(`running git diff command: ${gitDiffCmd}`)
+      const {stdout, stderr} = await execAsync(gitDiffCmd, {
+        maxBuffer: maxBufferSize
+      })
+
+      if (stderr) {
+        core.setFailed(`git diff error: ${stderr}`)
+        return
+      }
+
+      gitDiff = stdout
     }
 
-    (0,external_child_process_namespaceObject.exec)(
-      `git diff ${baseBranch} ${searchPath}`,
-      {maxBuffer: maxBufferSize},
-      (error, stdout, stderr) => {
-        if (error) {
-          core.setFailed(`git diff error: ${error.message}`)
-          return
-        }
-        if (stderr) {
-          core.setFailed(`git diff error: ${stderr}`)
-          return
-        }
+    // log the total amount of files changed in the raw diff
+    // if for some reason you have the literal string 'diff --git' in your file...
+    // ... this will report one more file changed than reality (or more if you have more of those strings in your file)
+    const totalFilesChanged = gitDiff.split('diff --git').length - 1
+    core.info(`total files changed (raw diff): ${totalFilesChanged}`)
 
-        // only log the raw diff if the Action is explicitly set to run in debug mode
-        core.debug(`raw git diff: ${stdout}`)
-        if (fileOutputOnly === false) {
-          // only set the output if fileOutputOnly is false
-          core.setOutput('raw-diff', stdout)
-        }
+    // only log the raw diff if the Action is explicitly set to run in debug mode
+    core.debug(`raw git diff: ${gitDiff}`)
+    if (fileOutputOnly === false) {
+      // only set the output if fileOutputOnly is false
+      core.setOutput('raw-diff', gitDiff)
+    }
 
-        // Write the raw diff to a file if the path is provided
-        const rawPath = core.getInput('raw_diff_file_output')
-        if (rawPath) {
-          core.debug(`writing raw diff to ${rawPath}`)
-          core.setOutput('raw-diff-path', rawPath)
-          ;(0,external_fs_.writeFileSync)(rawPath, stdout)
-        }
+    // Write the raw diff to a file if the path is provided
+    const rawPath = core.getInput('raw_diff_file_output')
+    if (rawPath) {
+      core.debug(`writing raw diff to ${rawPath}`)
+      core.setOutput('raw-diff-path', rawPath)
+      ;(0,external_fs_.writeFileSync)(rawPath, gitDiff)
+    }
 
-        // JSON diff
-        const diff = mjs(stdout)
-        const jsonDiff = JSON.stringify(diff)
+    // JSON diff
+    const diff = mjs(gitDiff)
+    const jsonDiff = JSON.stringify(diff)
 
-        // only log the json diff if the Action is explicitly set to run in debug mode
-        core.debug(JSON.stringify(diff))
+    // log the total amount of files changed in the json diff
+    core.info(`total files changed (json diff): ${diff.files.length}`)
 
-        // only set the output if fileOutputOnly is false
-        if (fileOutputOnly === false) {
-          core.setOutput('json-diff', jsonDiff)
-        }
+    // only log the json diff if the Action is explicitly set to run in debug mode
+    core.debug(`jsonDiff: ${jsonDiff}`)
 
-        // Write the JSON diff to a file if the path is provided
-        const jsonPath = core.getInput('json_diff_file_output')
-        if (jsonPath) {
-          core.debug(`writing json diff to ${jsonPath}`)
-          core.setOutput('json-diff-path', jsonPath)
-          ;(0,external_fs_.writeFileSync)(jsonPath, jsonDiff)
-        }
+    // only set the output if fileOutputOnly is false
+    if (fileOutputOnly === false) {
+      core.setOutput('json-diff', jsonDiff)
+    }
 
-        return diff
-      }
-    )
+    // Write the JSON diff to a file if the path is provided
+    const jsonPath = core.getInput('json_diff_file_output')
+    if (jsonPath) {
+      core.debug(`writing json diff to ${jsonPath}`)
+      core.setOutput('json-diff-path', jsonPath)
+      ;(0,external_fs_.writeFileSync)(jsonPath, jsonDiff)
+    }
+
+    return diff
   } catch (e) {
     core.setFailed(`error getting git diff: ${e}`)
   }
@@ -27085,7 +27117,7 @@ function gitDiff() {
 
 
 async function run() {
-  gitDiff()
+  await gitDiff()
 }
 
 run()

@@ -1,7 +1,7 @@
 import {gitDiff} from './functions/git-diff'
 
 export async function run() {
-  gitDiff()
+  await gitDiff()
 }
 
 run()
