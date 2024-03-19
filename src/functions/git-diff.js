@@ -1,8 +1,8 @@
 import * as core from '@actions/core'
 import parseGitDiff from 'parse-git-diff'
-import { exec } from 'child_process'
-import { promisify } from 'util';
-import { writeFileSync } from 'fs'
+import {exec} from 'child_process'
+import {promisify} from 'util'
+import {writeFileSync} from 'fs'
 
 // Helper function to get the diff from the git command
 // :returns: The diff object which is parsed git diff
@@ -31,7 +31,10 @@ export async function gitDiff() {
       maxBufferSize = 1000000
     }
 
-    const { stdout, stderr } = await execAsync(`git diff ${baseBranch} ${searchPath}`, { maxBuffer: maxBufferSize });
+    const {stdout, stderr} = await execAsync(
+      `git diff ${baseBranch} ${searchPath}`,
+      {maxBuffer: maxBufferSize}
+    )
 
     if (stderr) {
       core.setFailed(`git diff error: ${stderr}`)
