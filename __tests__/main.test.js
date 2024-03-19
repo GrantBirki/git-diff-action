@@ -35,9 +35,13 @@ test('executes gitDiff', async () => {
   expect(lastFile.chunks[0].changes[0]?.lineAfter).toBe(undefined)
 
   expect(results.files[0].type).toBe('ChangedFile')
-  expect(results.files[0].chunks[0].changes[0].content).toBe(`import { v4 as uuidv4 } from 'uuid';`)
+  expect(results.files[0].chunks[0].changes[0].content).toBe(
+    `import { v4 as uuidv4 } from 'uuid';`
+  )
   expect(results.files[0].chunks[0].changes[0].type).toBe('UnchangedLine')
-  expect(results.files[0].chunks[0].changes[2].content).toBe(`import cacheMachine from '../utils/cache-machine.mjs';`)
+  expect(results.files[0].chunks[0].changes[2].content).toBe(
+    `import cacheMachine from '../utils/cache-machine.mjs';`
+  )
   expect(results.files[0].chunks[0].changes[2].type).toBe('DeletedLine')
 
   expect(infoMock).toHaveBeenCalledWith('total files changed (raw diff): 5')
@@ -55,11 +59,15 @@ test('executes gitDiff with binary files', async () => {
   expect(lastFile.path).toBe('utils/cache-machine.mjs')
 
   expect(results.files[0].type).toBe('ChangedFile')
-  expect(results.files[0].chunks[0].changes[0].content).toBe(`import { v4 as uuidv4 } from 'uuid';`)
+  expect(results.files[0].chunks[0].changes[0].content).toBe(
+    `import { v4 as uuidv4 } from 'uuid';`
+  )
   expect(results.files[0].chunks[0].changes[0].type).toBe('UnchangedLine')
-  expect(results.files[0].chunks[0].changes[2].content).toBe(`import cacheMachine from '../utils/cache-machine.mjs';`)
+  expect(results.files[0].chunks[0].changes[2].content).toBe(
+    `import cacheMachine from '../utils/cache-machine.mjs';`
+  )
   expect(results.files[0].chunks[0].changes[2].type).toBe('DeletedLine')
-  
+
   expect(results.files.length).toBe(7)
   expect(infoMock).toHaveBeenCalledWith(
     'reading git diff from file: __tests__/fixtures/with-binary-files.diff'
