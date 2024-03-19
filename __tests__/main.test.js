@@ -22,6 +22,24 @@ beforeEach(() => {
 test('executes gitDiff', async () => {
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
+
+  const firstFile = results.files[0]
+  expect(firstFile.path).toBe('custom-endpoints/nightbot.mjs')
+
+  const lastFile = results.files[results.files.length - 1]
+  expect(lastFile.path).toBe('utils/cache-machine.mjs')
+  expect(lastFile.type).toBe('DeletedFile')
+  expect(lastFile.chunks[0].changes[0].type).toBe('DeletedLine')
+  expect(lastFile.chunks[0].changes[0].content).toBe(`// cache url`)
+  expect(lastFile.chunks[0].changes[0].lineBefore).toBe(1)
+  expect(lastFile.chunks[0].changes[0]?.lineAfter).toBe(undefined)
+
+  expect(results.files[0].type).toBe('ChangedFile')
+  expect(results.files[0].chunks[0].changes[0].content).toBe(`import { v4 as uuidv4 } from 'uuid';`)
+  expect(results.files[0].chunks[0].changes[0].type).toBe('UnchangedLine')
+  expect(results.files[0].chunks[0].changes[2].content).toBe(`import cacheMachine from '../utils/cache-machine.mjs';`)
+  expect(results.files[0].chunks[0].changes[2].type).toBe('DeletedLine')
+
   expect(infoMock).toHaveBeenCalledWith('total files changed (raw diff): 5')
   expect(infoMock).toHaveBeenCalledWith('total files changed (json diff): 5')
 })
@@ -30,9 +48,18 @@ test('executes gitDiff with binary files', async () => {
   process.env.INPUT_GIT_DIFF_FILE = '__tests__/fixtures/with-binary-files.diff'
   const results = await gitDiff()
 
+  const firstFile = results.files[0]
+  expect(firstFile.path).toBe('custom-endpoints/nightbot.mjs')
+
   const lastFile = results.files[results.files.length - 1]
   expect(lastFile.path).toBe('utils/cache-machine.mjs')
 
+  expect(results.files[0].type).toBe('ChangedFile')
+  expect(results.files[0].chunks[0].changes[0].content).toBe(`import { v4 as uuidv4 } from 'uuid';`)
+  expect(results.files[0].chunks[0].changes[0].type).toBe('UnchangedLine')
+  expect(results.files[0].chunks[0].changes[2].content).toBe(`import cacheMachine from '../utils/cache-machine.mjs';`)
+  expect(results.files[0].chunks[0].changes[2].type).toBe('DeletedLine')
+  
   expect(results.files.length).toBe(7)
   expect(infoMock).toHaveBeenCalledWith(
     'reading git diff from file: __tests__/fixtures/with-binary-files.diff'
@@ -49,6 +76,9 @@ test('executes gitDiff with binary files and --binary flag and breaks (bug test)
   process.env.INPUT_GIT_DIFF_FILE =
     '__tests__/fixtures/with-binary-files-and-binary-flag.diff'
   const results = await gitDiff()
+
+  const firstFile = results.files[0]
+  expect(firstFile.path).toBe('custom-endpoints/nightbot.mjs')
 
   const lastFile = results.files[results.files.length - 1]
   expect(lastFile.path).toBe('kv-cache.js')
