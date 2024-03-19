@@ -42,10 +42,13 @@ jobs:
         run: |
           result_checksum=$(shasum -a 256 diff.json)
           expected_checksum=$(cat __tests__/fixtures/diff.json.sha256)
-          echo "result_checksum: $result_checksum"
+          echo "..result_checksum: $result_checksum"
           echo "expected_checksum: $expected_checksum"
           if [ "$result_checksum" != "$expected_checksum" ]; then
-            echo "checksums do not match"
+            echo "❌ checksums do not match"
+            exit 1
+          else
+            echo "✅ checksums match"
           fi
 
       # Upload the json diff as an artifact
