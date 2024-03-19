@@ -28,7 +28,11 @@ inputs:
     required: false
   git_options:
     description: Additional options to pass to the git binary
-    default: "--no-color --full-index --binary"
+    default: "--no-color --full-index"
+    required: false
+  git_diff_file:
+    description: Optionally read the diff from a file instead of running `git diff`
+    default: "false"
     required: false
 outputs:
   json-diff:

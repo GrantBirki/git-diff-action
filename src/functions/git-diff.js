@@ -2,7 +2,7 @@ import * as core from '@actions/core'
 import parseGitDiff from 'parse-git-diff'
 import {exec} from 'child_process'
 import {promisify} from 'util'
-import {writeFileSync} from 'fs'
+import {writeFileSync, readFileSync} from 'fs'
 
 // Helper function to get the diff from the git command
 // :returns: The diff object which is parsed git diff
@@ -20,40 +20,52 @@ export async function gitDiff() {
     core.debug(`max_buffer_size: ${maxBufferSize}`)
     const fileOutputOnly = core.getInput('file_output_only') === 'true'
     const gitOptions = core.getInput('git_options')
+    const gitDiffFile = core.getInput('git_diff_file')
 
-    // if max_buffer_size is not defined, just use the default
-    var maxBufferSize = maxBufferSizeInput
-    if (
-      isNaN(maxBufferSizeInput) ||
-      maxBufferSizeInput === null ||
-      maxBufferSizeInput === undefined
-    ) {
-      core.info('max_buffer_size is not defined, using default of 1000000')
-      maxBufferSize = 1000000
-    }
+    var gitDiff
 
-    // --no-pager ensures that the git command does not use a pager (like less) to display the diff
-    const {stdout, stderr} = await execAsync(
-      `git --no-pager diff ${gitOptions} ${baseBranch} ${searchPath}`,
-      {maxBuffer: maxBufferSize}
-    )
+    core.debug(`git_diff_file: ${gitDiffFile}`)
+    // If git_diff_file is provided, read the file and return the diff
+    if (gitDiffFile !== 'false') {
+      core.info(`reading git diff from file: ${gitDiffFile}`)
+      gitDiff = readFileSync(gitDiffFile, 'utf8')
+    } else {
+      // if max_buffer_size is not defined, just use the default
+      var maxBufferSize = maxBufferSizeInput
+      if (
+        isNaN(maxBufferSizeInput) ||
+        maxBufferSizeInput === null ||
+        maxBufferSizeInput === undefined
+      ) {
+        core.info('max_buffer_size is not defined, using default of 1000000')
+        maxBufferSize = 1000000
+      }
 
-    if (stderr) {
-      core.setFailed(`git diff error: ${stderr}`)
-      return
+      // --no-pager ensures that the git command does not use a pager (like less) to display the diff
+      const {stdout, stderr} = await execAsync(
+        `git --no-pager diff ${gitOptions} ${baseBranch} ${searchPath}`,
+        {maxBuffer: maxBufferSize}
+      )
+
+      if (stderr) {
+        core.setFailed(`git diff error: ${stderr}`)
+        return
+      }
+
+      gitDiff = stdout
     }
 
     // log the total amount of files changed in the raw diff
     // if for some reason you have the literal string 'diff --git' in your file...
     // ... this will report one more file changed than reality (or more if you have more of those strings in your file)
-    const totalFilesChanged = stdout.split('diff --git').length - 1
+    const totalFilesChanged = gitDiff.split('diff --git').length - 1
     core.info(`total files changed (raw diff): ${totalFilesChanged}`)
 
     // only log the raw diff if the Action is explicitly set to run in debug mode
-    core.debug(`raw git diff: ${stdout}`)
+    core.debug(`raw git diff: ${gitDiff}`)
     if (fileOutputOnly === false) {
       // only set the output if fileOutputOnly is false
-      core.setOutput('raw-diff', stdout)
+      core.setOutput('raw-diff', gitDiff)
     }
 
     // Write the raw diff to a file if the path is provided
@@ -61,11 +73,11 @@ export async function gitDiff() {
     if (rawPath) {
       core.debug(`writing raw diff to ${rawPath}`)
       core.setOutput('raw-diff-path', rawPath)
-      writeFileSync(rawPath, stdout)
+      writeFileSync(rawPath, gitDiff)
     }
 
     // JSON diff
-    const diff = parseGitDiff(stdout)
+    const diff = parseGitDiff(gitDiff)
     const jsonDiff = JSON.stringify(diff)
 
     // log the total amount of files changed in the json diff
