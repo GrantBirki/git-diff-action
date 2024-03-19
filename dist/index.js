@@ -27120,7 +27120,10 @@ async function run() {
   await gitDiff()
 }
 
-run()
+/* istanbul ignore next */
+if (process.env.GIT_DIFF_JEST_TEST !== 'true') {
+  run()
+}
 
 })();
 
