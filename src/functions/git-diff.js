@@ -1,16 +1,13 @@
 import * as core from '@actions/core'
 import parseGitDiff from 'parse-git-diff'
-import {exec} from 'child_process'
-import {promisify} from 'util'
-import {writeFileSync, readFileSync} from 'fs'
+import {execAsync} from './exec-async'
+import fs from 'fs'
 
 // Helper function to get the diff from the git command
 // :returns: The diff object which is parsed git diff
 // If an error occurs, setFailed is called and it returns null
 export async function gitDiff() {
   try {
-    const execAsync = promisify(exec)
-
     // Get the base branch to use for the diff
     const baseBranch = core.getInput('base_branch')
     core.debug(`base_branch: ${baseBranch}`)
@@ -30,7 +27,7 @@ export async function gitDiff() {
     // If git_diff_file is provided, read the file and return the diff
     if (gitDiffFile !== 'false') {
       core.info(`reading git diff from file: ${gitDiffFile}`)
-      gitDiff = readFileSync(gitDiffFile, 'utf8')
+      gitDiff = fs.readFileSync(gitDiffFile, 'utf8')
     } else {
       // if max_buffer_size is not defined, just use the default
       var maxBufferSize = maxBufferSizeInput
@@ -82,7 +79,7 @@ export async function gitDiff() {
     if (rawPath) {
       core.debug(`writing raw diff to ${rawPath}`)
       core.setOutput('raw-diff-path', rawPath)
-      writeFileSync(rawPath, gitDiff)
+      fs.writeFileSync(rawPath, gitDiff)
     }
 
     // JSON diff
@@ -105,7 +102,7 @@ export async function gitDiff() {
     if (jsonPath) {
       core.debug(`writing json diff to ${jsonPath}`)
       core.setOutput('json-diff-path', jsonPath)
-      writeFileSync(jsonPath, jsonDiff)
+      fs.writeFileSync(jsonPath, jsonDiff)
     }
 
     return diff
