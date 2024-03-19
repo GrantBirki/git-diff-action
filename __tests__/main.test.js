@@ -40,7 +40,7 @@ beforeEach(() => {
   process.env.INPUT_SEARCH_PATH = '.'
   process.env.INPUT_MAX_BUFFER_SIZE = '1000000'
   process.env.INPUT_FILE_OUTPUT_ONLY = 'false'
-  process.env.INPUT_GIT_OPTIONS = '--no-color --full-index --binary'
+  process.env.INPUT_GIT_OPTIONS = '--no-color --full-index --diff-filter=dB'
 })
 
 test('executes main', async () => {
