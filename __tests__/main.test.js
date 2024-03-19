@@ -45,6 +45,7 @@ test('executes gitDiff with binary files', async () => {
 // there is an issue with the 'parseGitDiff' library where if the --binary flag is used, it will break the parsing
 // it will still return "some" results, but it will break the parsing and return an incomplete set of results
 test('executes gitDiff with binary files and --binary flag and breaks (bug test)', async () => {
+  process.env.INPUT_GIT_OPTIONS = '--no-color --full-index --binary'
   process.env.INPUT_GIT_DIFF_FILE =
     '__tests__/fixtures/with-binary-files-and-binary-flag.diff'
   const results = await gitDiff()

@@ -20,7 +20,9 @@ export async function gitDiff() {
     core.debug(`max_buffer_size: ${maxBufferSize}`)
     const fileOutputOnly = core.getInput('file_output_only') === 'true'
     const gitOptions = core.getInput('git_options')
+    core.debug(`git_options: ${gitOptions}`)
     const gitDiffFile = core.getInput('git_diff_file')
+    core.debug(`git_diff_file: ${gitDiffFile}`)
 
     var gitDiff
 
@@ -41,11 +43,18 @@ export async function gitDiff() {
         maxBufferSize = 1000000
       }
 
+      if (gitOptions.includes('--binary')) {
+        core.warning(
+          `--binary flag is set, this may cause unexpected issues with the diff`
+        )
+      }
+
       // --no-pager ensures that the git command does not use a pager (like less) to display the diff
-      const {stdout, stderr} = await execAsync(
-        `git --no-pager diff ${gitOptions} ${baseBranch} ${searchPath}`,
-        {maxBuffer: maxBufferSize}
-      )
+      const gitDiffCmd = `git --no-pager diff ${gitOptions} ${baseBranch} ${searchPath}`
+      core.debug(`running git diff command: ${gitDiffCmd}`)
+      const {stdout, stderr} = await execAsync(gitDiffCmd, {
+        maxBuffer: maxBufferSize
+      })
 
       if (stderr) {
         core.setFailed(`git diff error: ${stderr}`)
