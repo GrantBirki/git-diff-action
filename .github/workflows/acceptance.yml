@@ -55,5 +55,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: json-diff
-          path: ~/diff.json
+          path: diff.json
           retention-days: 1
