@@ -41,6 +41,12 @@ export async function gitDiff() {
       return
     }
 
+    // log the total amount of files changed in the raw diff
+    // if for some reason you have the literal string 'diff --git' in your file...
+    // ... this will report one more file changed than reality (or more if you have more of those strings in your file)
+    const totalFilesChanged = stdout.split('diff --git').length - 1
+    core.info(`total files changed (raw diff): ${totalFilesChanged}`)
+
     // only log the raw diff if the Action is explicitly set to run in debug mode
     core.debug(`raw git diff: ${stdout}`)
     if (fileOutputOnly === false) {
@@ -59,6 +65,9 @@ export async function gitDiff() {
     // JSON diff
     const diff = parseGitDiff(stdout)
     const jsonDiff = JSON.stringify(diff)
+
+    // log the total amount of files changed in the json diff
+    core.info(`total files changed (json diff): ${diff.files.length}`)
 
     // only log the json diff if the Action is explicitly set to run in debug mode
     core.debug(`jsonDiff: ${jsonDiff}`)
