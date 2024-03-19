@@ -27031,6 +27031,8 @@ var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_);
 // If an error occurs, setFailed is called and it returns null
 async function gitDiff() {
   try {
+    core.info('🏃 starting the git-diff-action')
+
     // Get the base branch to use for the diff
     const baseBranch = core.getInput('base_branch')
     core.debug(`base_branch: ${baseBranch}`)
@@ -27049,7 +27051,7 @@ async function gitDiff() {
     core.debug(`git_diff_file: ${gitDiffFile}`)
     // If git_diff_file is provided, read the file and return the diff
     if (gitDiffFile !== 'false') {
-      core.info(`reading git diff from file: ${gitDiffFile}`)
+      core.info(`📂 reading git diff from file: ${gitDiffFile}`)
       gitDiff = external_fs_default().readFileSync(gitDiffFile, 'utf8')
     } else {
       // if max_buffer_size is not defined, just use the default
@@ -27088,7 +27090,9 @@ async function gitDiff() {
     // if for some reason you have the literal string 'diff --git' in your file...
     // ... this will report one more file changed than reality (or more if you have more of those strings in your file)
     const totalFilesChanged = gitDiff.split('diff --git').length - 1
-    core.info(`total files changed (raw diff): ${totalFilesChanged}`)
+    core.info(
+      `🧮 total detected files changed (raw diff): ${totalFilesChanged}`
+    )
 
     // only log the raw diff if the Action is explicitly set to run in debug mode
     core.debug(`raw git diff: ${gitDiff}`)
@@ -27100,7 +27104,7 @@ async function gitDiff() {
     // Write the raw diff to a file if the path is provided
     const rawPath = core.getInput('raw_diff_file_output')
     if (rawPath) {
-      core.debug(`writing raw diff to ${rawPath}`)
+      core.info(`💾 writing raw diff to: ${rawPath}`)
       core.setOutput('raw-diff-path', rawPath)
       external_fs_default().writeFileSync(rawPath, gitDiff)
     }
@@ -27110,7 +27114,9 @@ async function gitDiff() {
     const jsonDiff = JSON.stringify(diff)
 
     // log the total amount of files changed in the json diff
-    core.info(`total files changed (json diff): ${diff.files.length}`)
+    core.info(
+      `🧮 total detected files changed (json diff): ${diff.files.length}`
+    )
 
     // only log the json diff if the Action is explicitly set to run in debug mode
     core.debug(`jsonDiff: ${jsonDiff}`)
@@ -27123,11 +27129,12 @@ async function gitDiff() {
     // Write the JSON diff to a file if the path is provided
     const jsonPath = core.getInput('json_diff_file_output')
     if (jsonPath) {
-      core.debug(`writing json diff to ${jsonPath}`)
+      core.info(`💾 writing json diff to: ${jsonPath}`)
       core.setOutput('json-diff-path', jsonPath)
       external_fs_default().writeFileSync(jsonPath, jsonDiff)
     }
 
+    core.info('✅ git-diff-action completed successfully')
     return diff
   } catch (e) {
     core.setFailed(`error getting git diff: ${e}`)
