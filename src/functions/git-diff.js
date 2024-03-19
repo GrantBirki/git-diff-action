@@ -19,6 +19,7 @@ export async function gitDiff() {
     const maxBufferSizeInput = parseInt(core.getInput('max_buffer_size'))
     core.debug(`max_buffer_size: ${maxBufferSize}`)
     const fileOutputOnly = core.getInput('file_output_only') === 'true'
+    const gitOptions = core.getInput('git_options')
 
     // if max_buffer_size is not defined, just use the default
     var maxBufferSize = maxBufferSizeInput
@@ -31,8 +32,9 @@ export async function gitDiff() {
       maxBufferSize = 1000000
     }
 
+    // --no-pager ensures that the git command does not use a pager (like less) to display the diff
     const {stdout, stderr} = await execAsync(
-      `git diff ${baseBranch} ${searchPath}`,
+      `git --no-pager diff ${gitOptions} ${baseBranch} ${searchPath}`,
       {maxBuffer: maxBufferSize}
     )
 

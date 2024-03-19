@@ -26,6 +26,10 @@ inputs:
     description: Maximum output buffer size. Defaults to 10M, try increasing if you have issues. This value is technically a string but it gets converted to an integer.
     default: "10000000"
     required: false
+  git_options:
+    description: Additional options to pass to the git binary
+    default: "--no-color --full-index --binary"
+    required: false
 outputs:
   json-diff:
     description: "The `git diff` of the pull request in JSON format"
