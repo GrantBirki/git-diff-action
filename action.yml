@@ -28,7 +28,7 @@ inputs:
     required: false
   git_options:
     description: Additional options to pass to the git binary
-    default: "--no-color --full-index --diff-filter=dB"
+    default: "--no-color --full-index --binary"
     required: false
 outputs:
   json-diff:
