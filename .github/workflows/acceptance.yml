@@ -1,0 +1,59 @@
+name: acceptance
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      # Need to checkout for testing the Action in this repo
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # needed to checkout all branches
+
+      # Start check the PR diff
+      - uses: ./
+        id: git-diff-action
+        with:
+          git_diff_file: __tests__/fixtures/main.diff
+          json_diff_file_output: diff.json
+          raw_diff_file_output: diff.txt
+
+      # Print the diff in JSON format
+      - name: print json diff
+        env:
+          DIFF: ${{ steps.git-diff-action.outputs.json-diff-path }}
+        run: cat $DIFF
+
+      # Echo the raw git diff
+      - name: print raw diff
+        env:
+          DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
+        run: cat $DIFF
+
+      - name: verify checksums
+        run: |
+          result_checksum=$(shasum -a 256 diff.json)
+          expected_checksum=$(cat __tests__/fixtures/diff.json.sha256)
+          echo "..result_checksum: $result_checksum"
+          echo "expected_checksum: $expected_checksum"
+          if [ "$result_checksum" != "$expected_checksum" ]; then
+            echo "❌ checksums do not match"
+            exit 1
+          else
+            echo "✅ checksums match"
+          fi
+
+      # Upload the json diff as an artifact
+      - uses: actions/upload-artifact@v4
+        with:
+          name: json-diff
+          path: ~/diff.json
+          retention-days: 1
