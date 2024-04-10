@@ -49,7 +49,7 @@ export async function gitDiff() {
       }
 
       // --no-pager ensures that the git command does not use a pager (like less) to display the diff
-      const gitDiffCmd = `git --no-pager diff ${gitOptions} ${baseBranch} ${searchPath}`
+      const gitDiffCmd = `git --no-pager diff ${gitOptions} ${baseBranch} -- ${searchPath}`
       core.debug(`running git diff command: ${gitDiffCmd}`)
       const {stdout, stderr} = await execAsync(gitDiffCmd, {
         maxBuffer: maxBufferSize
