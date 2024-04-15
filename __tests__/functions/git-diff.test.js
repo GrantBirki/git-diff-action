@@ -172,7 +172,7 @@ test('executes gitDiff by using the git binary', async () => {
     '🧮 total detected files changed (json diff): 5'
   )
   expect(debugMock).toHaveBeenCalledWith(
-    'running git diff command: git --no-pager diff --no-color --full-index HEAD^1 .'
+    'running git diff command: git --no-pager diff --no-color --full-index HEAD^1 -- .'
   )
 })
 
