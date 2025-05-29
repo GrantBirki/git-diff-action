@@ -3,6 +3,25 @@ import parseGitDiff from 'parse-git-diff'
 import {execAsync} from './exec-async'
 import fs from 'fs'
 
+// Constants
+const DEFAULT_MAX_BUFFER_SIZE = 1000000
+const GIT_DIFF_MARKER = 'diff --git'
+
+// Helper function to validate and get max buffer size
+function getMaxBufferSize(maxBufferSizeInput) {
+  if (
+    isNaN(maxBufferSizeInput) ||
+    maxBufferSizeInput === null ||
+    maxBufferSizeInput === undefined
+  ) {
+    core.info(
+      `max_buffer_size is not defined, using default of ${DEFAULT_MAX_BUFFER_SIZE}`
+    )
+    return DEFAULT_MAX_BUFFER_SIZE
+  }
+  return maxBufferSizeInput
+}
+
 // Helper function to get the diff from the git command
 // :returns: The diff object which is parsed git diff
 // If an error occurs, setFailed is called and it returns null
@@ -16,31 +35,22 @@ export async function gitDiff() {
     const searchPath = core.getInput('search_path')
     core.debug(`search_path: ${searchPath}`)
     const maxBufferSizeInput = parseInt(core.getInput('max_buffer_size'))
-    core.debug(`max_buffer_size: ${maxBufferSize}`)
+    core.debug(`max_buffer_size: ${maxBufferSizeInput}`)
     const fileOutputOnly = core.getInput('file_output_only') === 'true'
     const gitOptions = core.getInput('git_options')
     core.debug(`git_options: ${gitOptions}`)
     const gitDiffFile = core.getInput('git_diff_file')
     core.debug(`git_diff_file: ${gitDiffFile}`)
 
-    var gitDiff
+    var rawGitDiff
 
-    core.debug(`git_diff_file: ${gitDiffFile}`)
     // If git_diff_file is provided, read the file and return the diff
     if (gitDiffFile !== 'false') {
       core.info(`📂 reading git diff from file: ${gitDiffFile}`)
-      gitDiff = fs.readFileSync(gitDiffFile, 'utf8')
+      rawGitDiff = fs.readFileSync(gitDiffFile, 'utf8')
     } else {
       // if max_buffer_size is not defined, just use the default
-      var maxBufferSize = maxBufferSizeInput
-      if (
-        isNaN(maxBufferSizeInput) ||
-        maxBufferSizeInput === null ||
-        maxBufferSizeInput === undefined
-      ) {
-        core.info('max_buffer_size is not defined, using default of 1000000')
-        maxBufferSize = 1000000
-      }
+      const maxBufferSize = getMaxBufferSize(maxBufferSizeInput)
 
       if (gitOptions.includes('--binary')) {
         core.warning(
@@ -60,22 +70,21 @@ export async function gitDiff() {
         return
       }
 
-      gitDiff = stdout
+      rawGitDiff = stdout
     }
 
-    // log the total amount of files changed in the raw diff
-    // if for some reason you have the literal string 'diff --git' in your file...
-    // ... this will report one more file changed than reality (or more if you have more of those strings in your file)
-    const totalFilesChanged = gitDiff.split('diff --git').length - 1
+    // Count files changed in the raw diff
+    // Note: This simple counting method may over-count if file content contains the git diff marker
+    const totalFilesChanged = rawGitDiff.split(GIT_DIFF_MARKER).length - 1
     core.info(
       `🧮 total detected files changed (raw diff): ${totalFilesChanged}`
     )
 
     // only log the raw diff if the Action is explicitly set to run in debug mode
-    core.debug(`raw git diff: ${gitDiff}`)
+    core.debug(`raw git diff: ${rawGitDiff}`)
     if (fileOutputOnly === false) {
       // only set the output if fileOutputOnly is false
-      core.setOutput('raw-diff', gitDiff)
+      core.setOutput('raw-diff', rawGitDiff)
     }
 
     // Write the raw diff to a file if the path is provided
@@ -83,11 +92,11 @@ export async function gitDiff() {
     if (rawPath) {
       core.info(`💾 writing raw diff to: ${rawPath}`)
       core.setOutput('raw-diff-path', rawPath)
-      fs.writeFileSync(rawPath, gitDiff)
+      fs.writeFileSync(rawPath, rawGitDiff)
     }
 
     // JSON diff
-    const diff = parseGitDiff(gitDiff)
+    const diff = parseGitDiff(rawGitDiff)
     const jsonDiff = JSON.stringify(diff)
 
     // log the total amount of files changed in the json diff
