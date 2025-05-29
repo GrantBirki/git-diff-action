@@ -1,0 +1,7 @@
+diff --git a/old-file.txt b/new-file.txt
+similarity index 100%
+rename from old-file.txt
+rename to new-file.txt
+diff --git a/script.sh b/script.sh
+old mode 100644
+new mode 100755
