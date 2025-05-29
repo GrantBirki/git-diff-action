@@ -16,7 +16,7 @@ export async function gitDiff() {
     const searchPath = core.getInput('search_path')
     core.debug(`search_path: ${searchPath}`)
     const maxBufferSizeInput = parseInt(core.getInput('max_buffer_size'))
-    core.debug(`max_buffer_size: ${maxBufferSize}`)
+    core.debug(`max_buffer_size: ${maxBufferSizeInput}`)
     const fileOutputOnly = core.getInput('file_output_only') === 'true'
     const gitOptions = core.getInput('git_options')
     core.debug(`git_options: ${gitOptions}`)

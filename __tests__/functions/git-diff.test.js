@@ -229,3 +229,37 @@ test('fails when no custom git diff file is found', async () => {
     )
   }
 })
+
+test('executes gitDiff with file_output_only set to true', async () => {
+  process.env.INPUT_FILE_OUTPUT_ONLY = 'true'
+  const setOutputMock = jest.spyOn(core, 'setOutput')
+
+  const results = await gitDiff()
+  expect(results.files.length).toBe(5)
+
+  // Verify that setOutput is not called for raw-diff and json-diff when file_output_only is true
+  expect(setOutputMock).not.toHaveBeenCalledWith('raw-diff', expect.anything())
+  expect(setOutputMock).not.toHaveBeenCalledWith('json-diff', expect.anything())
+})
+
+test('executes gitDiff with file_output_only true and file outputs', async () => {
+  process.env.INPUT_FILE_OUTPUT_ONLY = 'true'
+  process.env.INPUT_RAW_DIFF_FILE_OUTPUT = 'test-raw.txt'
+  process.env.INPUT_JSON_DIFF_FILE_OUTPUT = 'test-json.json'
+  const setOutputMock = jest.spyOn(core, 'setOutput')
+  
+  jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {
+    return true
+  })
+
+  const results = await gitDiff()
+  expect(results.files.length).toBe(5)
+
+  // Verify that setOutput is not called for raw-diff and json-diff when file_output_only is true
+  expect(setOutputMock).not.toHaveBeenCalledWith('raw-diff', expect.anything())
+  expect(setOutputMock).not.toHaveBeenCalledWith('json-diff', expect.anything())
+  
+  // But should be called for file paths
+  expect(setOutputMock).toHaveBeenCalledWith('raw-diff-path', 'test-raw.txt')
+  expect(setOutputMock).toHaveBeenCalledWith('json-diff-path', 'test-json.json')
+})
