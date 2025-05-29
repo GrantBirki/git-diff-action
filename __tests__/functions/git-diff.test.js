@@ -247,7 +247,7 @@ test('executes gitDiff with file_output_only true and file outputs', async () =>
   process.env.INPUT_RAW_DIFF_FILE_OUTPUT = 'test-raw.txt'
   process.env.INPUT_JSON_DIFF_FILE_OUTPUT = 'test-json.json'
   const setOutputMock = jest.spyOn(core, 'setOutput')
-  
+
   jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {
     return true
   })
@@ -258,7 +258,7 @@ test('executes gitDiff with file_output_only true and file outputs', async () =>
   // Verify that setOutput is not called for raw-diff and json-diff when file_output_only is true
   expect(setOutputMock).not.toHaveBeenCalledWith('raw-diff', expect.anything())
   expect(setOutputMock).not.toHaveBeenCalledWith('json-diff', expect.anything())
-  
+
   // But should be called for file paths
   expect(setOutputMock).toHaveBeenCalledWith('raw-diff-path', 'test-raw.txt')
   expect(setOutputMock).toHaveBeenCalledWith('json-diff-path', 'test-json.json')
@@ -276,7 +276,7 @@ test('executes gitDiff with specific search_path directory', async () => {
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
-  
+
   expect(debugMock).toHaveBeenCalledWith('search_path: src/')
   expect(debugMock).toHaveBeenCalledWith(
     'running git diff command: git --no-pager diff --no-color --full-index HEAD^1 -- src/'
@@ -294,7 +294,7 @@ test('executes gitDiff with glob pattern search_path', async () => {
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
-  
+
   expect(debugMock).toHaveBeenCalledWith('search_path: **/*.js')
   expect(debugMock).toHaveBeenCalledWith(
     'running git diff command: git --no-pager diff --no-color --full-index HEAD^1 -- **/*.js'
@@ -312,7 +312,7 @@ test('executes gitDiff with specific file search_path', async () => {
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
-  
+
   expect(debugMock).toHaveBeenCalledWith('search_path: README.md')
   expect(debugMock).toHaveBeenCalledWith(
     'running git diff command: git --no-pager diff --no-color --full-index HEAD^1 -- README.md'
@@ -325,17 +325,19 @@ test('executes gitDiff with custom max_buffer_size', async () => {
   process.env.INPUT_GIT_DIFF_FILE = 'false'
 
   const diff = fs.readFileSync('__tests__/fixtures/main.diff', 'utf8')
-  const execAsyncSpy = jest.spyOn(execAsync, 'execAsync').mockImplementation(() => {
-    return {stdout: diff, stderr: null}
-  })
+  const execAsyncSpy = jest
+    .spyOn(execAsync, 'execAsync')
+    .mockImplementation(() => {
+      return {stdout: diff, stderr: null}
+    })
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
-  
+
   expect(debugMock).toHaveBeenCalledWith('max_buffer_size: 5000000')
   expect(execAsyncSpy).toHaveBeenCalledWith(
     'git --no-pager diff --no-color --full-index HEAD^1 -- .',
-    { maxBuffer: 5000000 }
+    {maxBuffer: 5000000}
   )
 })
 
@@ -344,20 +346,22 @@ test('executes gitDiff with invalid max_buffer_size (NaN)', async () => {
   process.env.INPUT_GIT_DIFF_FILE = 'false'
 
   const diff = fs.readFileSync('__tests__/fixtures/main.diff', 'utf8')
-  const execAsyncSpy = jest.spyOn(execAsync, 'execAsync').mockImplementation(() => {
-    return {stdout: diff, stderr: null}
-  })
+  const execAsyncSpy = jest
+    .spyOn(execAsync, 'execAsync')
+    .mockImplementation(() => {
+      return {stdout: diff, stderr: null}
+    })
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
-  
+
   expect(debugMock).toHaveBeenCalledWith('max_buffer_size: NaN')
   expect(infoMock).toHaveBeenCalledWith(
     'max_buffer_size is not defined, using default of 1000000'
   )
   expect(execAsyncSpy).toHaveBeenCalledWith(
     'git --no-pager diff --no-color --full-index HEAD^1 -- .',
-    { maxBuffer: 1000000 }
+    {maxBuffer: 1000000}
   )
 })
 
@@ -366,17 +370,19 @@ test('executes gitDiff with zero max_buffer_size', async () => {
   process.env.INPUT_GIT_DIFF_FILE = 'false'
 
   const diff = fs.readFileSync('__tests__/fixtures/main.diff', 'utf8')
-  const execAsyncSpy = jest.spyOn(execAsync, 'execAsync').mockImplementation(() => {
-    return {stdout: diff, stderr: null}
-  })
+  const execAsyncSpy = jest
+    .spyOn(execAsync, 'execAsync')
+    .mockImplementation(() => {
+      return {stdout: diff, stderr: null}
+    })
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
-  
+
   expect(debugMock).toHaveBeenCalledWith('max_buffer_size: 0')
   expect(execAsyncSpy).toHaveBeenCalledWith(
     'git --no-pager diff --no-color --full-index HEAD^1 -- .',
-    { maxBuffer: 0 }
+    {maxBuffer: 0}
   )
 })
 
@@ -392,7 +398,7 @@ test('executes gitDiff with custom git_options', async () => {
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
-  
+
   expect(debugMock).toHaveBeenCalledWith('git_options: --no-color --name-only')
   expect(debugMock).toHaveBeenCalledWith(
     'running git diff command: git --no-pager diff --no-color --name-only HEAD^1 -- .'
@@ -410,7 +416,7 @@ test('executes gitDiff with minimal git_options', async () => {
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
-  
+
   expect(debugMock).toHaveBeenCalledWith('git_options: ')
   expect(debugMock).toHaveBeenCalledWith(
     'running git diff command: git --no-pager diff  HEAD^1 -- .'
@@ -428,8 +434,10 @@ test('executes gitDiff with complex git_options', async () => {
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
-  
-  expect(debugMock).toHaveBeenCalledWith('git_options: --no-color --full-index --find-renames')
+
+  expect(debugMock).toHaveBeenCalledWith(
+    'git_options: --no-color --full-index --find-renames'
+  )
   expect(debugMock).toHaveBeenCalledWith(
     'running git diff command: git --no-pager diff --no-color --full-index --find-renames HEAD^1 -- .'
   )
@@ -441,7 +449,7 @@ test('executes gitDiff with empty diff file', async () => {
 
   const results = await gitDiff()
   expect(results.files.length).toBe(0)
-  
+
   expect(infoMock).toHaveBeenCalledWith(
     '📂 reading git diff from file: __tests__/fixtures/empty.diff'
   )
@@ -460,7 +468,7 @@ test('executes gitDiff with special characters in diff file', async () => {
   expect(results.files.length).toBe(1)
   expect(results.files[0].path).toBe('test-file-with-special-chars.txt')
   expect(results.files[0].type).toBe('AddedFile')
-  
+
   expect(infoMock).toHaveBeenCalledWith(
     '📂 reading git diff from file: __tests__/fixtures/special-chars.diff'
   )
@@ -478,7 +486,7 @@ test('executes gitDiff with renames and mode changes', async () => {
   const results = await gitDiff()
   // The parser may not handle all git diff types equally, so we check what we actually get
   expect(results.files.length).toBeGreaterThanOrEqual(1)
-  
+
   expect(infoMock).toHaveBeenCalledWith(
     '📂 reading git diff from file: __tests__/fixtures/rename-and-mode.diff'
   )
@@ -517,7 +525,7 @@ test('executes gitDiff with custom base_branch', async () => {
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
-  
+
   expect(debugMock).toHaveBeenCalledWith('base_branch: main')
   expect(debugMock).toHaveBeenCalledWith(
     'running git diff command: git --no-pager diff --no-color --full-index main -- .'
@@ -535,7 +543,7 @@ test('executes gitDiff with SHA base_branch', async () => {
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
-  
+
   expect(debugMock).toHaveBeenCalledWith('base_branch: a1b2c3d')
   expect(debugMock).toHaveBeenCalledWith(
     'running git diff command: git --no-pager diff --no-color --full-index a1b2c3d -- .'
@@ -546,7 +554,7 @@ test('executes gitDiff with SHA base_branch', async () => {
 test('handles file system errors when writing output files', async () => {
   process.env.INPUT_RAW_DIFF_FILE_OUTPUT = '/invalid/path/raw.txt'
   process.env.INPUT_JSON_DIFF_FILE_OUTPUT = '/invalid/path/json.json'
-  
+
   jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {
     throw new Error('ENOENT: no such file or directory')
   })
@@ -588,18 +596,20 @@ test('executes gitDiff with very large max_buffer_size', async () => {
   process.env.INPUT_JSON_DIFF_FILE_OUTPUT = ''
 
   const diff = fs.readFileSync('__tests__/fixtures/main.diff', 'utf8')
-  const execAsyncSpy = jest.spyOn(execAsync, 'execAsync').mockImplementation(() => {
-    return {stdout: diff, stderr: null}
-  })
+  const execAsyncSpy = jest
+    .spyOn(execAsync, 'execAsync')
+    .mockImplementation(() => {
+      return {stdout: diff, stderr: null}
+    })
 
   const results = await gitDiff()
   expect(results).toBeDefined()
   expect(results.files.length).toBe(5)
-  
+
   expect(debugMock).toHaveBeenCalledWith('max_buffer_size: 999999999')
   expect(execAsyncSpy).toHaveBeenCalledWith(
     'git --no-pager diff --no-color --full-index HEAD^1 -- .',
-    { maxBuffer: 999999999 }
+    {maxBuffer: 999999999}
   )
 })
 
@@ -610,7 +620,7 @@ test('executes gitDiff with large diff file', async () => {
   const results = await gitDiff()
   expect(results).toBeDefined()
   expect(results.files.length).toBeGreaterThan(5) // Should have more files than the base test
-  
+
   expect(infoMock).toHaveBeenCalledWith(
     '📂 reading git diff from file: __tests__/fixtures/large.diff'
   )
@@ -633,38 +643,48 @@ test('executes gitDiff with all file outputs and options', async () => {
   process.env.INPUT_BASE_BRANCH = 'origin/main'
 
   const diff = fs.readFileSync('__tests__/fixtures/main.diff', 'utf8')
-  const execAsyncSpy = jest.spyOn(execAsync, 'execAsync').mockImplementation(() => {
-    return {stdout: diff, stderr: null}
-  })
-  const writeFileSyncSpy = jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {
-    return true
-  })
+  const execAsyncSpy = jest
+    .spyOn(execAsync, 'execAsync')
+    .mockImplementation(() => {
+      return {stdout: diff, stderr: null}
+    })
+  const writeFileSyncSpy = jest
+    .spyOn(fs, 'writeFileSync')
+    .mockImplementation(() => {
+      return true
+    })
   const setOutputSpy = jest.spyOn(core, 'setOutput')
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
-  
+
   // Verify all inputs were processed correctly
   expect(debugMock).toHaveBeenCalledWith('base_branch: origin/main')
   expect(debugMock).toHaveBeenCalledWith('search_path: src/**/*.js')
   expect(debugMock).toHaveBeenCalledWith('max_buffer_size: 2000000')
   expect(debugMock).toHaveBeenCalledWith('git_options: --no-color --stat')
-  
+
   // Verify git command was built correctly
   expect(execAsyncSpy).toHaveBeenCalledWith(
     'git --no-pager diff --no-color --stat origin/main -- src/**/*.js',
-    { maxBuffer: 2000000 }
+    {maxBuffer: 2000000}
   )
-  
+
   // Verify files were written
   expect(writeFileSyncSpy).toHaveBeenCalledWith('test-output.raw', diff)
-  expect(writeFileSyncSpy).toHaveBeenCalledWith('test-output.json', expect.any(String))
-  
+  expect(writeFileSyncSpy).toHaveBeenCalledWith(
+    'test-output.json',
+    expect.any(String)
+  )
+
   // Verify outputs were set (since file_output_only is false)
   expect(setOutputSpy).toHaveBeenCalledWith('raw-diff', diff)
   expect(setOutputSpy).toHaveBeenCalledWith('json-diff', expect.any(String))
   expect(setOutputSpy).toHaveBeenCalledWith('raw-diff-path', 'test-output.raw')
-  expect(setOutputSpy).toHaveBeenCalledWith('json-diff-path', 'test-output.json')
+  expect(setOutputSpy).toHaveBeenCalledWith(
+    'json-diff-path',
+    'test-output.json'
+  )
 })
 
 test('handles malformed diff content gracefully', async () => {
@@ -673,7 +693,33 @@ test('handles malformed diff content gracefully', async () => {
   const results = await gitDiff()
   expect(results.files.length).toBe(0)
   expect(results.type).toBe('GitDiff')
-  
+
   // Should complete successfully even with empty diff
-  expect(infoMock).toHaveBeenCalledWith('✅ git-diff-action completed successfully')
+  expect(infoMock).toHaveBeenCalledWith(
+    '✅ git-diff-action completed successfully'
+  )
+})
+
+// Test to verify the constant values are used correctly
+test('uses correct default max buffer size constant', async () => {
+  process.env.INPUT_MAX_BUFFER_SIZE = ''
+  process.env.INPUT_GIT_DIFF_FILE = 'false'
+
+  const diff = fs.readFileSync('__tests__/fixtures/main.diff', 'utf8')
+  const execAsyncSpy = jest
+    .spyOn(execAsync, 'execAsync')
+    .mockImplementation(() => {
+      return {stdout: diff, stderr: null}
+    })
+
+  const results = await gitDiff()
+  expect(results.files.length).toBe(5)
+
+  expect(infoMock).toHaveBeenCalledWith(
+    'max_buffer_size is not defined, using default of 1000000'
+  )
+  expect(execAsyncSpy).toHaveBeenCalledWith(
+    'git --no-pager diff --no-color --full-index HEAD^1 -- .',
+    {maxBuffer: 1000000}
+  )
 })
