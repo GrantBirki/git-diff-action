@@ -27,11 +27,11 @@
   "author": "Grant Birkinbine",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.10.1",
-    "@actions/github": "^6.0.0",
+    "@actions/core": "^3.0.0",
+    "@actions/github": "^9.0.0",
     "dedent-js": "^1.0.1",
-    "js-yaml": "^4.1.0",
-    "parse-git-diff": "^0.0.15"
+    "js-yaml": "^4.1.1",
+    "parse-git-diff": "^0.0.20"
   },
   "jest": {
     "coverageReporters": [
@@ -43,6 +43,9 @@
     "collectCoverageFrom": [
       "./src/**"
     ],
+    "moduleNameMapper": {
+      "^@actions/core$": "<rootDir>/test-support/actions-core.js"
+    },
     "coverageThreshold": {
       "global": {
         "branches": 100,
@@ -53,16 +56,17 @@
     }
   },
   "devDependencies": {
-    "@babel/plugin-transform-modules-commonjs": "^7.24.1",
-    "@types/node": "^20.12.4",
-    "@vercel/ncc": "^0.38.1",
-    "@babel/preset-env": "^7.24.4",
-    "eslint": "^8.57.0",
-    "eslint-plugin-jest": "^27.9.0",
-    "jest": "^29.7.0",
-    "@babel/core": "^7.24.4",
-    "babel-jest": "^29.7.0",
-    "prettier": "^3.2.5",
+    "@eslint/js": "^10.0.1",
+    "@babel/plugin-transform-modules-commonjs": "^7.28.6",
+    "@types/node": "^25.3.3",
+    "@vercel/ncc": "^0.38.4",
+    "@babel/preset-env": "^7.29.0",
+    "eslint": "^10.0.2",
+    "eslint-plugin-jest": "^29.15.0",
+    "jest": "^30.2.0",
+    "@babel/core": "^7.29.0",
+    "babel-jest": "^30.2.0",
+    "prettier": "^3.8.1",
     "make-coverage-badge": "^1.2.0"
   }
 }

@@ -3,10 +3,10 @@ import * as execAsync from '../../src/functions/exec-async'
 import * as core from '@actions/core'
 import fs from 'fs'
 
-const infoMock = jest.spyOn(core, 'info')
-const debugMock = jest.spyOn(core, 'debug')
-const setFailedMock = jest.spyOn(core, 'setFailed')
-const warningMock = jest.spyOn(core, 'warning')
+const infoMock = core.info
+const debugMock = core.debug
+const setFailedMock = core.setFailed
+const warningMock = core.warning
 
 function buildGitArgs(
   gitOptions = ['--no-color', '--full-index'],
@@ -22,13 +22,6 @@ function gitArgvDebug(args) {
 
 beforeEach(() => {
   jest.clearAllMocks()
-
-  jest.spyOn(core, 'saveState').mockImplementation(() => {})
-  jest.spyOn(core, 'debug').mockImplementation(() => {})
-  jest.spyOn(core, 'info').mockImplementation(() => {})
-  jest.spyOn(core, 'setOutput').mockImplementation(() => {})
-  jest.spyOn(core, 'setFailed').mockImplementation(() => {})
-  jest.spyOn(core, 'warning').mockImplementation(() => {})
 
   process.env.INPUT_BASE_BRANCH = 'HEAD^1'
   process.env.INPUT_SEARCH_PATH = '.'
@@ -237,7 +230,7 @@ test('fails when no custom git diff file is found', async () => {
 
 test('executes gitDiff with file_output_only set to true', async () => {
   process.env.INPUT_FILE_OUTPUT_ONLY = 'true'
-  const setOutputMock = jest.spyOn(core, 'setOutput')
+  const setOutputMock = core.setOutput
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
@@ -251,7 +244,7 @@ test('executes gitDiff with file_output_only true and file outputs', async () =>
   process.env.INPUT_FILE_OUTPUT_ONLY = 'true'
   process.env.INPUT_RAW_DIFF_FILE_OUTPUT = 'test-raw.txt'
   process.env.INPUT_JSON_DIFF_FILE_OUTPUT = 'test-json.json'
-  const setOutputMock = jest.spyOn(core, 'setOutput')
+  const setOutputMock = core.setOutput
 
   jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {
     return true
@@ -845,7 +838,7 @@ test('executes gitDiff with all file outputs and options', async () => {
     .mockImplementation(() => {
       return true
     })
-  const setOutputSpy = jest.spyOn(core, 'setOutput')
+  const setOutputSpy = core.setOutput
 
   const results = await gitDiff()
   expect(results.files.length).toBe(5)
