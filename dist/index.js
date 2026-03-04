@@ -27978,15 +27978,19 @@ var external_util_ = __nccwpck_require__(9023);
 
 
 
-async function execAsync(cmd, opts) {
-  const execAsyncFunc = external_util_.promisify(external_child_process_.exec)
-  return await execAsyncFunc(cmd, opts)
+async function execFileAsync(file, args, opts) {
+  const execFileAsyncFunc = external_util_.promisify(external_child_process_.execFile)
+  return await execFileAsyncFunc(file, args, opts)
 }
 
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(9896);
 var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_);
+// EXTERNAL MODULE: external "path"
+var external_path_ = __nccwpck_require__(6928);
+var external_path_default = /*#__PURE__*/__nccwpck_require__.n(external_path_);
 ;// CONCATENATED MODULE: ./src/functions/git-diff.js
+
 
 
 
@@ -28009,6 +28013,120 @@ function getMaxBufferSize(maxBufferSizeInput) {
     return DEFAULT_MAX_BUFFER_SIZE
   }
   return maxBufferSizeInput
+}
+
+function tokenizeInputArgs(value, inputName) {
+  if (!value || value.trim() === '') {
+    return []
+  }
+
+  const args = []
+  let current = ''
+  let quote = null
+  let escaped = false
+  let tokenInProgress = false
+
+  for (const char of value) {
+    if (escaped) {
+      current += char
+      escaped = false
+      tokenInProgress = true
+      continue
+    }
+
+    if (quote === "'") {
+      if (char === "'") {
+        quote = null
+      } else {
+        current += char
+      }
+      tokenInProgress = true
+      continue
+    }
+
+    if (quote === '"') {
+      if (char === '"') {
+        quote = null
+      } else if (char === '\\') {
+        escaped = true
+      } else {
+        current += char
+      }
+      tokenInProgress = true
+      continue
+    }
+
+    if (/\s/.test(char)) {
+      if (tokenInProgress) {
+        if (current !== '') {
+          args.push(current)
+        }
+        current = ''
+        tokenInProgress = false
+      }
+      continue
+    }
+
+    if (char === "'" || char === '"') {
+      quote = char
+      tokenInProgress = true
+      continue
+    }
+
+    if (char === '\\') {
+      escaped = true
+      tokenInProgress = true
+      continue
+    }
+
+    current += char
+    tokenInProgress = true
+  }
+
+  if (quote) {
+    throw new Error(`${inputName} contains an unterminated quoted value`)
+  }
+
+  if (escaped) {
+    throw new Error(`${inputName} ends with an incomplete escape sequence`)
+  }
+
+  if (tokenInProgress && current !== '') {
+    args.push(current)
+  }
+
+  return args
+}
+
+function getGitDiffArgs(gitOptions, baseBranch, searchPath) {
+  return [
+    '--no-pager',
+    'diff',
+    ...tokenizeInputArgs(gitOptions, 'git_options'),
+    baseBranch,
+    '--',
+    searchPath
+  ]
+}
+
+function resolveWorkspacePath(filePath) {
+  const workspaceRoot = external_fs_default().realpathSync(
+    process.env.GITHUB_WORKSPACE || process.cwd()
+  )
+  const resolvedPath = external_path_default().resolve(workspaceRoot, filePath)
+  const realPath = external_fs_default().realpathSync(resolvedPath)
+  const relativePath = external_path_default().relative(workspaceRoot, realPath)
+
+  if (
+    relativePath === '' ||
+    (!relativePath.startsWith('..') && !external_path_default().isAbsolute(relativePath))
+  ) {
+    return realPath
+  }
+
+  throw new Error(
+    'git_diff_file must resolve to a file inside the GitHub workspace'
+  )
 }
 
 // Helper function to get the diff from the git command
@@ -28035,22 +28153,25 @@ async function gitDiff() {
 
     // If git_diff_file is provided, read the file and return the diff
     if (gitDiffFile !== 'false') {
-      core.info(`📂 reading git diff from file: ${gitDiffFile}`)
-      rawGitDiff = external_fs_default().readFileSync(gitDiffFile, 'utf8')
+      const safeGitDiffFile = resolveWorkspacePath(gitDiffFile)
+      core.info(`📂 reading git diff from file: ${safeGitDiffFile}`)
+      rawGitDiff = external_fs_default().readFileSync(safeGitDiffFile, 'utf8')
     } else {
       // if max_buffer_size is not defined, just use the default
       const maxBufferSize = getMaxBufferSize(maxBufferSizeInput)
+      const gitDiffArgs = getGitDiffArgs(gitOptions, baseBranch, searchPath)
 
-      if (gitOptions.includes('--binary')) {
+      if (gitDiffArgs.includes('--binary')) {
         core.warning(
           `--binary flag is set, this may cause unexpected issues with the diff`
         )
       }
 
       // --no-pager ensures that the git command does not use a pager (like less) to display the diff
-      const gitDiffCmd = `git --no-pager diff ${gitOptions} ${baseBranch} -- ${searchPath}`
-      core.debug(`running git diff command: ${gitDiffCmd}`)
-      const {stdout, stderr} = await execAsync(gitDiffCmd, {
+      core.debug(
+        `running git diff argv: ${JSON.stringify(['git', ...gitDiffArgs])}`
+      )
+      const {stdout, stderr} = await execFileAsync('git', gitDiffArgs, {
         maxBuffer: maxBufferSize
       })
 

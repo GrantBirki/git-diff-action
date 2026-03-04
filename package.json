@@ -9,7 +9,7 @@
     "format-check": "prettier --check '**/*.js'",
     "lint": "eslint src/**/*.js",
     "package": "NODE_OPTIONS=--openssl-legacy-provider ncc build src/main.js -o dist --source-map --license licenses.txt",
-    "test": "(GIT_DIFF_JEST_TEST=true jest && make-coverage-badge --output-path ./badges/coverage.svg) || make-coverage-badge --output-path ./badges/coverage.svg",
+    "test": "GIT_DIFF_JEST_TEST=true jest; test_exit=$?; make-coverage-badge --output-path ./badges/coverage.svg >/dev/null 2>&1 || echo 'coverage badge update skipped'; exit $test_exit",
     "ci-test": "GIT_DIFF_JEST_TEST=true jest",
     "all": "npm run format && npm run lint && npm run package",
     "bundle": "npm run format && npm run package"
@@ -45,7 +45,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "lines": 100
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
       }
     }
   },

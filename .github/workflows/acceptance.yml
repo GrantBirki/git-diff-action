@@ -18,30 +18,38 @@ jobs:
         with:
           fetch-depth: 0 # needed to checkout all branches
 
-      # Start check the PR diff
+      # Start check the PR diff from a fixture file
       - uses: ./
-        id: git-diff-action
+        id: fixture-diff
         with:
           git_diff_file: __tests__/fixtures/main.diff
           json_diff_file_output: diff.json
           raw_diff_file_output: diff.txt
 
-      # Print the diff in JSON format
-      - name: print json diff
-        env:
-          DIFF: ${{ steps.git-diff-action.outputs.json-diff-path }}
-        run: cat $DIFF
+      - name: assert inline outputs were set
+        if: ${{ steps.fixture-diff.outputs.json-diff == '' || steps.fixture-diff.outputs.raw-diff == '' }}
+        run: |
+          echo "expected json-diff and raw-diff outputs to be populated"
+          exit 1
 
-      # Echo the raw git diff
-      - name: print raw diff
+      - name: verify fixture outputs
         env:
-          DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
-        run: cat $DIFF
+          JSON_DIFF_PATH: ${{ steps.fixture-diff.outputs.json-diff-path }}
+          RAW_DIFF_PATH: ${{ steps.fixture-diff.outputs.raw-diff-path }}
+        run: |
+          set -euo pipefail
+          test "$JSON_DIFF_PATH" = "diff.json"
+          test "$RAW_DIFF_PATH" = "diff.txt"
+          test -s diff.json
+          test -s diff.txt
+          grep -q '"path":"custom-endpoints/nightbot.mjs"' diff.json
+          grep -q 'diff --git a/custom-endpoints/nightbot.mjs b/custom-endpoints/nightbot.mjs' diff.txt
 
       - name: verify checksums
         run: |
-          result_checksum=$(shasum -a 256 diff.json)
-          expected_checksum=$(cat __tests__/fixtures/diff.json.sha256)
+          set -euo pipefail
+          result_checksum="$(sha256sum diff.json)"
+          expected_checksum="$(cat __tests__/fixtures/diff.json.sha256)"
           echo "..result_checksum: $result_checksum"
           echo "expected_checksum: $expected_checksum"
           if [ "$result_checksum" != "$expected_checksum" ]; then
@@ -54,6 +62,86 @@ jobs:
       # Upload the json diff as an artifact
       - uses: actions/upload-artifact@v4
         with:
-          name: json-diff
-          path: diff.json
+          name: fixture-diff
+          path: |
+            diff.json
+            diff.txt
           retention-days: 1
+
+  git-binary-acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: create a tracked working tree change
+        run: |
+          set -euo pipefail
+          printf '\nacceptance-marker-%s\n' "$GITHUB_RUN_ID" >> __tests__/test.md
+
+      - uses: ./
+        id: live-diff
+        with:
+          base_branch: HEAD
+          search_path: __tests__/test.md
+          git_options: --no-color --full-index
+          file_output_only: 'true'
+          json_diff_file_output: live-diff.json
+          raw_diff_file_output: live-diff.txt
+
+      - name: assert file_output_only suppressed inline outputs
+        if: ${{ steps.live-diff.outputs.json-diff != '' || steps.live-diff.outputs.raw-diff != '' }}
+        run: |
+          echo "expected json-diff and raw-diff outputs to be empty when file_output_only is true"
+          exit 1
+
+      - name: verify git binary outputs
+        env:
+          JSON_DIFF_PATH: ${{ steps.live-diff.outputs.json-diff-path }}
+          RAW_DIFF_PATH: ${{ steps.live-diff.outputs.raw-diff-path }}
+          MARKER: acceptance-marker-${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          test "$JSON_DIFF_PATH" = "live-diff.json"
+          test "$RAW_DIFF_PATH" = "live-diff.txt"
+          test -s live-diff.json
+          test -s live-diff.txt
+          grep -q '"path":"__tests__/test.md"' live-diff.json
+          grep -q "$MARKER" live-diff.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: live-diff
+          path: |
+            live-diff.json
+            live-diff.txt
+          retention-days: 1
+
+  invalid-input-acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: reject git_diff_file outside the workspace
+        id: outside-workspace
+        continue-on-error: true
+        uses: ./
+        with:
+          git_diff_file: /etc/hosts
+
+      - name: reject malformed git_options
+        id: bad-git-options
+        continue-on-error: true
+        uses: ./
+        with:
+          git_diff_file: 'false'
+          git_options: '--no-color "unterminated'
+
+      - name: assert invalid inputs failed
+        run: |
+          set -euo pipefail
+          test "${{ steps.outside-workspace.outcome }}" = "failure"
+          test "${{ steps.bad-git-options.outcome }}" = "failure"
