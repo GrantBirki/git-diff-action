@@ -1,7 +1,8 @@
 import * as core from '@actions/core'
 import parseGitDiff from 'parse-git-diff'
-import {execAsync} from './exec-async'
+import {execFileAsync} from './exec-async'
 import fs from 'fs'
+import path from 'path'
 
 // Constants
 const DEFAULT_MAX_BUFFER_SIZE = 1000000
@@ -20,6 +21,120 @@ function getMaxBufferSize(maxBufferSizeInput) {
     return DEFAULT_MAX_BUFFER_SIZE
   }
   return maxBufferSizeInput
+}
+
+function tokenizeInputArgs(value, inputName) {
+  if (!value || value.trim() === '') {
+    return []
+  }
+
+  const args = []
+  let current = ''
+  let quote = null
+  let escaped = false
+  let tokenInProgress = false
+
+  for (const char of value) {
+    if (escaped) {
+      current += char
+      escaped = false
+      tokenInProgress = true
+      continue
+    }
+
+    if (quote === "'") {
+      if (char === "'") {
+        quote = null
+      } else {
+        current += char
+      }
+      tokenInProgress = true
+      continue
+    }
+
+    if (quote === '"') {
+      if (char === '"') {
+        quote = null
+      } else if (char === '\\') {
+        escaped = true
+      } else {
+        current += char
+      }
+      tokenInProgress = true
+      continue
+    }
+
+    if (/\s/.test(char)) {
+      if (tokenInProgress) {
+        if (current !== '') {
+          args.push(current)
+        }
+        current = ''
+        tokenInProgress = false
+      }
+      continue
+    }
+
+    if (char === "'" || char === '"') {
+      quote = char
+      tokenInProgress = true
+      continue
+    }
+
+    if (char === '\\') {
+      escaped = true
+      tokenInProgress = true
+      continue
+    }
+
+    current += char
+    tokenInProgress = true
+  }
+
+  if (quote) {
+    throw new Error(`${inputName} contains an unterminated quoted value`)
+  }
+
+  if (escaped) {
+    throw new Error(`${inputName} ends with an incomplete escape sequence`)
+  }
+
+  if (tokenInProgress && current !== '') {
+    args.push(current)
+  }
+
+  return args
+}
+
+function getGitDiffArgs(gitOptions, baseBranch, searchPath) {
+  return [
+    '--no-pager',
+    'diff',
+    ...tokenizeInputArgs(gitOptions, 'git_options'),
+    baseBranch,
+    '--',
+    searchPath
+  ]
+}
+
+function resolveWorkspacePath(filePath) {
+  const workspaceRoot = fs.realpathSync(
+    process.env.GITHUB_WORKSPACE || process.cwd()
+  )
+  const resolvedPath = path.resolve(workspaceRoot, filePath)
+  const realPath = fs.realpathSync(resolvedPath)
+  const relativePath = path.relative(workspaceRoot, realPath)
+
+  if (
+    relativePath === '' ||
+    (!relativePath.startsWith('..') && !path.isAbsolute(relativePath))
+  ) {
+    return realPath
+  }
+
+  throw new Error(
+    'git_diff_file must resolve to a file inside the GitHub workspace'
+  )
 }
 
 // Helper function to get the diff from the git command
@@ -46,22 +161,25 @@ export async function gitDiff() {
 
     // If git_diff_file is provided, read the file and return the diff
     if (gitDiffFile !== 'false') {
-      core.info(`📂 reading git diff from file: ${gitDiffFile}`)
-      rawGitDiff = fs.readFileSync(gitDiffFile, 'utf8')
+      const safeGitDiffFile = resolveWorkspacePath(gitDiffFile)
+      core.info(`📂 reading git diff from file: ${safeGitDiffFile}`)
+      rawGitDiff = fs.readFileSync(safeGitDiffFile, 'utf8')
     } else {
       // if max_buffer_size is not defined, just use the default
       const maxBufferSize = getMaxBufferSize(maxBufferSizeInput)
+      const gitDiffArgs = getGitDiffArgs(gitOptions, baseBranch, searchPath)
 
-      if (gitOptions.includes('--binary')) {
+      if (gitDiffArgs.includes('--binary')) {
         core.warning(
           `--binary flag is set, this may cause unexpected issues with the diff`
         )
       }
 
       // --no-pager ensures that the git command does not use a pager (like less) to display the diff
-      const gitDiffCmd = `git --no-pager diff ${gitOptions} ${baseBranch} -- ${searchPath}`
-      core.debug(`running git diff command: ${gitDiffCmd}`)
-      const {stdout, stderr} = await execAsync(gitDiffCmd, {
+      core.debug(
+        `running git diff argv: ${JSON.stringify(['git', ...gitDiffArgs])}`
+      )
+      const {stdout, stderr} = await execFileAsync('git', gitDiffArgs, {
         maxBuffer: maxBufferSize
       })
 

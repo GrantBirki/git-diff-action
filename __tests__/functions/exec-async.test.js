@@ -1,23 +1,24 @@
-import {execAsync} from '../../src/functions/exec-async'
-import {exec} from 'child_process'
+import {execFileAsync} from '../../src/functions/exec-async'
+import {execFile} from 'child_process'
 import * as util from 'util'
 
 jest.mock('child_process')
 jest.mock('util')
 
-describe('execAsync', () => {
-  it('should call exec and promisify', async () => {
-    const execMock = jest.fn()
-    exec.mockImplementation(execMock)
-    const promisifyMock = jest.fn().mockImplementation(() => execMock)
+describe('execFileAsync', () => {
+  it('should call execFile and promisify', async () => {
+    const execFileMock = jest.fn()
+    execFile.mockImplementation(execFileMock)
+    const promisifyMock = jest.fn().mockImplementation(() => execFileMock)
     util.promisify.mockImplementation(promisifyMock)
 
-    const cmd = 'echo hello'
+    const file = 'git'
+    const args = ['status', '--short']
     const opts = {}
 
-    await execAsync(cmd, opts)
+    await execFileAsync(file, args, opts)
 
-    expect(promisifyMock).toHaveBeenCalledWith(exec)
-    expect(execMock).toHaveBeenCalledWith(cmd, opts)
+    expect(promisifyMock).toHaveBeenCalledWith(execFile)
+    expect(execFileMock).toHaveBeenCalledWith(file, args, opts)
   })
 })

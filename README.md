@@ -185,8 +185,8 @@ Expand the section below to see an example of the JSON diff output
 | `file_output_only` | no | `"false"` | Only use file related outputs and do not print any diffs to console / loggers. **highly recommended** |
 | `search_path` | no | `.` | Optionally limit the scope of the diff operation to a specific sub-path. Useful for limiting scope of the action. |
 | `max_buffer_size` | no | `"10000000"` | Maximum output buffer size for call to git binary. Default is 10M, try increasing this value if you have issues with maxBuffer overflow. This value is technically a string but it gets converted to an integer. |
-| `git_options` | no | `"--no-color --full-index"` | Additional options to pass to the git binary |
-| `git_diff_file` | no | `"false"` | Optionally read the diff from a file instead of running `git diff` |
+| `git_options` | no | `"--no-color --full-index"` | Additional git diff options to pass to the git binary as argv tokens |
+| `git_diff_file` | no | `"false"` | Optionally read the diff from a file inside the GitHub workspace instead of running `git diff` |
 
 ## Outputs 📤
 
@@ -221,6 +221,12 @@ search_path: '**/*.yaml'
 # Only look in the src/ directory
 search_path: src/
 ```
+
+## `git_options` and `git_diff_file` Inputs
+
+`git_options` is parsed into individual argv tokens before invoking `git`, so quoted values such as `--word-diff-regex="foo bar"` are preserved without going through a shell.
+
+`git_diff_file` must resolve to a file inside `GITHUB_WORKSPACE` (or the current working directory if `GITHUB_WORKSPACE` is unset). This keeps file-based diff ingestion scoped to the checked-out repository.
 
 ## Known Issues
 

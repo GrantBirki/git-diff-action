@@ -27,11 +27,11 @@ inputs:
     default: "10000000"
     required: false
   git_options:
-    description: Additional options to pass to the git binary
+    description: Additional git diff options to pass to the git binary as argv tokens
     default: "--no-color --full-index"
     required: false
   git_diff_file:
-    description: Optionally read the diff from a file instead of running `git diff`
+    description: Optionally read the diff from a file inside the GitHub workspace instead of running `git diff`
     default: "false"
     required: false
 outputs:
