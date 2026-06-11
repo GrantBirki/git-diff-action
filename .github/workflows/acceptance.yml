@@ -60,7 +60,7 @@ jobs:
           fi
 
       # Upload the json diff as an artifact
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: fixture-diff
           path: |
@@ -110,7 +110,7 @@ jobs:
           grep -q '"path":"__tests__/test.md"' live-diff.json
           grep -q "$MARKER" live-diff.txt
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: live-diff
           path: |
