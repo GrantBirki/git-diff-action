@@ -11,32 +11,28 @@ on:
       - "**.md"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   package-check:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pin@v7.0.1
+        with:
+          persist-credentials: false
 
       - name: setup node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # pin@v7.0.0
         with:
           node-version-file: .node-version
-          cache: 'npm'
 
       - name: install dependencies
-        run: npm ci
+        run: script/bootstrap
 
-      - name: rebuild the dist/ directory
-        run: npm run bundle
-
-      - name: compare the expected and actual dist/ directories
-        run: |
-          if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
-            echo "Detected uncommitted changes after build.  See status below:"
-            git diff
-            exit 1
-          fi
+      - name: verify the committed bundle
+        run: script/verify-bundle
         id: diff
 
       # If index.js was different than expected, upload the expected version as an artifact

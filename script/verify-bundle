@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+source "$(dirname -- "${BASH_SOURCE[0]}")/environment"
+script/build
+if [[ -n "$(git status --porcelain --untracked-files=all -- dist)" ]]; then
+  echo 'dist/ differs from the committed bundle. Run script/build and commit the result.' >&2
+  git diff --stat -- dist
+  exit 1
+fi

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+source "$(dirname -- "${BASH_SOURCE[0]}")/environment"
+# The offline mode reuses artifacts from a previous protected bootstrap.
+args=(ci --ignore-scripts --no-audit --no-fund --cache .npm)
+case "${1:-}" in
+  '') ;;
+  --offline) args+=(--offline) ;;
+  *) echo 'Usage: script/bootstrap [--offline]' >&2; exit 1 ;;
+esac
+if command -v sfw >/dev/null 2>&1; then
+  sfw npm "${args[@]}"
+else
+  npm "${args[@]}"
+fi
+# A wrapper's successful exit alone does not prove installation happened.
+node --input-type=module <<'NODE'
+import assert from 'node:assert/strict'
+import {readFileSync} from 'node:fs'
+const lock = JSON.parse(readFileSync('package-lock.json', 'utf8'))
+for (const [path, expected] of Object.entries(lock.packages)) {
+  if (path === '') continue
+  const installed = JSON.parse(readFileSync(`${path}/package.json`, 'utf8'))
+  assert.equal(installed.version, expected.version, `Unexpected installed version: ${path}`)
+}
+NODE

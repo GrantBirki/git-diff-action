@@ -1,20 +1,16 @@
-import * as core from '@actions/core'
+import * as core from '../actions-core.ts'
 import parseGitDiff from 'parse-git-diff'
-import {execFileAsync} from './exec-async'
-import fs from 'fs'
-import path from 'path'
+import {execFileAsync} from './exec-async.ts'
+import fs from 'node:fs'
+import path from 'node:path'
 
 // Constants
 const DEFAULT_MAX_BUFFER_SIZE = 1000000
 const GIT_DIFF_MARKER = 'diff --git'
 
 // Helper function to validate and get max buffer size
-function getMaxBufferSize(maxBufferSizeInput) {
-  if (
-    isNaN(maxBufferSizeInput) ||
-    maxBufferSizeInput === null ||
-    maxBufferSizeInput === undefined
-  ) {
+function getMaxBufferSize(maxBufferSizeInput: number) {
+  if (Number.isNaN(maxBufferSizeInput)) {
     core.info(
       `max_buffer_size is not defined, using default of ${DEFAULT_MAX_BUFFER_SIZE}`
     )
@@ -23,14 +19,14 @@ function getMaxBufferSize(maxBufferSizeInput) {
   return maxBufferSizeInput
 }
 
-function tokenizeInputArgs(value, inputName) {
+function tokenizeInputArgs(value: string, inputName: string): string[] {
   if (!value || value.trim() === '') {
     return []
   }
 
   const args = []
   let current = ''
-  let quote = null
+  let quote: string | null = null
   let escaped = false
   let tokenInProgress = false
 
@@ -106,7 +102,11 @@ function tokenizeInputArgs(value, inputName) {
   return args
 }
 
-function getGitDiffArgs(gitOptions, baseBranch, searchPath) {
+function getGitDiffArgs(
+  gitOptions: string,
+  baseBranch: string,
+  searchPath: string
+) {
   return [
     '--no-pager',
     'diff',
@@ -117,7 +117,7 @@ function getGitDiffArgs(gitOptions, baseBranch, searchPath) {
   ]
 }
 
-function resolveWorkspacePath(filePath) {
+function resolveWorkspacePath(filePath: string) {
   const workspaceRoot = fs.realpathSync(
     process.env.GITHUB_WORKSPACE || process.cwd()
   )
@@ -157,7 +157,7 @@ export async function gitDiff() {
     const gitDiffFile = core.getInput('git_diff_file')
     core.debug(`git_diff_file: ${gitDiffFile}`)
 
-    var rawGitDiff
+    let rawGitDiff: string
 
     // If git_diff_file is provided, read the file and return the diff
     if (gitDiffFile !== 'false') {
@@ -242,5 +242,6 @@ export async function gitDiff() {
     return diff
   } catch (e) {
     core.setFailed(`error getting git diff: ${e}`)
+    return undefined
   }
 }

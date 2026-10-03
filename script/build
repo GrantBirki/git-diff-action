@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+source "$(dirname -- "${BASH_SOURCE[0]}")/environment"
+script/typecheck
+# Delete only the generated distribution so obsolete bundle files cannot survive.
+rm -rf dist
+node node_modules/@vercel/ncc/dist/ncc/cli.js build src/main.ts -o dist --source-map --license licenses.txt --target es2022
+cat LICENSES/actions-toolkit.txt >> dist/licenses.txt

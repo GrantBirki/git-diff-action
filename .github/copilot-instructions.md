@@ -1,77 +1,15 @@
 # Copilot Instructions
 
-You are an AI assistant that specializes in software development for the JavaScript programming language. Specifically, you are an expert in using JavaScript to build custom (native) GitHub Actions.
+This is a TypeScript GitHub Action. Consumers execute `dist/index.js` through `action.yml` on Node 24.
 
-## Environment Setup
+Use the exact `.node-version`. Run `script/bootstrap` for installation, `script/all` for formatting checks, strict type checking, native tests, build, and standalone acceptance. Run `script/format` when formatting needs updating. The same scripts run in CI.
 
-Bootstrap the project by running:
+Preserve inputs, outputs, errors, Git argv handling, workspace path restrictions, and the existing parser behavior. Keep the Actions adapter narrow. Do not replace the diff parser or expand the adapter solely to remove dependencies.
 
-```bash
-npm install
-```
+Every runtime source file requires a corresponding native Node test with 100% line, branch, and function coverage. Use `node:test` and `node:assert/strict`, not a compatibility wrapper for a removed test framework. Acceptance tests must exercise the generated distribution without installed packages.
 
-## Testing
+Runtime changes must include regenerated `dist/` files and license notices. Never hand-edit generated distribution files. After committing, `script/verify-bundle` must find no tracked or untracked changes in `dist/`.
 
-Ensure all unit tests pass by running the following:
+Use exact dependency versions and the committed lockfile. Preserve `.npmrc`, verify dependency publication ages and security findings, and disable installation scripts. Use Socket Firewall when installed. Routine checks and builds should remain offline after bootstrap.
 
-```bash
-npm run test
-```
-
-This project should include unit tests for everything.
-
-This project **requires 100% test coverage** of code.
-
-Unit tests should exist in the `__tests__` directory. They are powered by `jest`.
-
-An important note about tests is that you might get a warning/error when running `npm run test` related to problems with the coverage badge due to network troubles. If this is the case, please swap to using `npm run ci-test` instead. This will run the tests and generate the coverage report without trying to create a coverage badge.
-
-## Bundling
-
-The final commit should always be a bundle of the code. This is done by running the following command:
-
-```bash
-npm run all
-```
-
-This uses Vercel's `ncc` to bundle JS code for running in GitHub Actions.
-
-## Project Guidelines
-
-- Follow:
-   - Object-Oriented best practices, especially abstraction and encapsulation
-   - GRASP Principles, especially Information Expert, Creator, Indirection, Low Coupling, High Cohesion, and Pure Fabrication
-   - SOLID principles, especially Dependency Inversion, Open/Closed, and Single Responsibility
-- Base new work on latest `main` branch
-- Changes should maintain consistency with existing patterns and style.
-- Document changes clearly and thoroughly, including updates to existing comments when appropriate. Try to use the same "voice" as the other comments, mimicking their tone and style.
-- When responding to code refactoring suggestions, function suggestions, or other code changes, please keep your responses as concise as possible. We are capable engineers and can understand the code changes without excessive explanation. If you feel that a more detailed explanation is necessary, you can provide it, but keep it concise. After doing any refactoring, ensure to run `npm run test` to ensure that all tests still pass.
-- When suggesting code changes, always opt for the most maintainable approach. Try your best to keep the code clean and follow DRY principles. Avoid unnecessary complexity and always consider the long-term maintainability of the code.
-- When writing unit tests, try to consider edge cases as well as the main path of success. This will help ensure that the code is robust and can handle unexpected inputs or situations.
-- Hard-coded strings should almost always be constant variables.
-- In writing code, take the following as preferences but not rules:
-   - understandability over concision
-   - syntax, expressions, and blocks that are common across many languages over language-specific syntax.
-   - more descriptive names over brevity of variable, function, and class names
-   - the use of whitespace (newlines) over compactness of files
-   - naming of variables and methods that lead to expressions and blocks reading more like English sentences.
-   - less lines of code over more. Keep changes minimal and focused.
-
-## Pull Request Requirements
-
-- All tests must pass.
-- The linter must pass.
-- Documentation must be up-to-date.
-- The body of the Pull Request should:
-   - contain a summary of the changes
-   - make special note of any changes to dependencies
-   - comment on the security of the changes being made and offer suggestions for further securing the code
-
-## Repository Organization
-
-- `.github/` - GitHub configurations and settings
-- `script/` - Repository maintenance scripts
-- `src/` - Main code for the project. This is where the main application/service code lives
-- `__tests__/` - Tests for the project. This is where the unit tests live
-- `dist/` - This is where the JS compiled code lives for the GitHub Action
-- `action.yml` - The GitHub Action file. This is where the GitHub Action is defined
+Keep changes small and readable, document meaningful tradeoffs, and preserve least-privilege workflow permissions and existing action pins. Do not merge, tag, or release without explicit authorization.
