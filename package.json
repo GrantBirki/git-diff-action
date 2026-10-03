@@ -3,16 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "description": "A GitHub Action for gathering the git diff of a pull request in JSON format",
-  "main": "src/main.js",
+  "main": "src/main.ts",
   "scripts": {
-    "format": "prettier --write '**/*.js'",
-    "format-check": "prettier --check '**/*.js'",
-    "lint": "eslint src/**/*.js",
-    "package": "NODE_OPTIONS=--openssl-legacy-provider ncc build src/main.js -o dist --source-map --license licenses.txt",
-    "test": "GIT_DIFF_JEST_TEST=true jest; test_exit=$?; make-coverage-badge --output-path ./badges/coverage.svg >/dev/null 2>&1 || echo 'coverage badge update skipped'; exit $test_exit",
-    "ci-test": "GIT_DIFF_JEST_TEST=true jest",
-    "all": "npm run format && npm run lint && npm run package",
-    "bundle": "npm run format && npm run package"
+    "bootstrap": "script/bootstrap",
+    "format": "script/format",
+    "format-check": "script/format-check",
+    "typecheck": "script/typecheck",
+    "lint": "script/lint",
+    "test": "script/test",
+    "ci-test": "script/test",
+    "package": "script/build",
+    "bundle": "script/build",
+    "acceptance": "script/acceptance",
+    "check": "script/check",
+    "all": "script/all",
+    "verify-bundle": "script/verify-bundle"
   },
   "repository": {
     "type": "git",
@@ -27,53 +32,17 @@
   "author": "Grant Birkinbine",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^3.0.0",
-    "parse-git-diff": "^0.0.20"
-  },
-  "jest": {
-    "coverageReporters": [
-      "json-summary",
-      "text",
-      "lcov"
-    ],
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "./src/**"
-    ],
-    "moduleNameMapper": {
-      "^@actions/core$": "<rootDir>/test-support/actions-core.js"
-    },
-    "coverageThreshold": {
-      "global": {
-        "branches": 100,
-        "functions": 100,
-        "lines": 100,
-        "statements": 100
-      }
-    }
+    "parse-git-diff": "0.0.20"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@babel/plugin-transform-modules-commonjs": "^7.28.6",
-    "@vercel/ncc": "^0.38.4",
-    "eslint": "10.2.1",
-    "jest": "30.3.0",
-    "@babel/core": "7.29.6",
-    "babel-jest": "30.3.0",
-    "prettier": "^3.8.1",
-    "make-coverage-badge": "^1.2.0"
+    "@types/node": "24.13.2",
+    "@vercel/ncc": "0.38.4",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3"
   },
   "overrides": {
-    "@humanfs/node": "0.16.8",
-    "baseline-browser-mapping": "2.11.0",
-    "browserslist": "4.28.7",
-    "brace-expansion@^1": "1.1.21",
-    "brace-expansion@^2": "2.1.7",
-    "brace-expansion@^5": "5.0.12",
-    "flatted": "3.4.2",
-    "js-yaml@^3": "3.15.2",
-    "js-yaml@^4": "4.3.2",
-    "picomatch@^2": "2.3.2",
-    "picomatch@^4": "4.0.4"
-  }
+    "undici-types": "7.18.0"
+  },
+  "type": "module",
+  "packageManager": "npm@11.9.0"
 }

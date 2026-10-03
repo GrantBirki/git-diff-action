@@ -16,7 +16,16 @@ jobs:
       # Need to checkout for testing the Action in this repo
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pin@v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0 # needed to checkout all branches
+
+      - name: setup node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # pin@v7.0.0
+        with:
+          node-version-file: .node-version
+
+      - name: verify standalone bundle behavior
+        run: script/acceptance
 
       # Start check the PR diff from a fixture file
       - uses: ./
@@ -73,6 +82,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pin@v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - name: create a tracked working tree change
@@ -123,6 +133,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pin@v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - name: reject git_diff_file outside the workspace

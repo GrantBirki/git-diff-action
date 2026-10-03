@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+source "$(dirname -- "${BASH_SOURCE[0]}")/environment"
+exec node --test __tests__/acceptance.test.ts

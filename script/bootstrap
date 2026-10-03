@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+source "$(dirname -- "${BASH_SOURCE[0]}")/environment"
+# The offline mode reuses artifacts from a previous protected bootstrap.
+args=(ci --ignore-scripts --no-audit --no-fund --cache .npm)
+case "${1:-}" in
+  '') ;;
+  --offline) args+=(--offline) ;;
+  *) echo 'Usage: script/bootstrap [--offline]' >&2; exit 1 ;;
+esac
+if command -v sfw >/dev/null 2>&1; then
+  exec sfw npm "${args[@]}"
+fi
+exec npm "${args[@]}"

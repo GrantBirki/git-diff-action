@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+source "$(dirname -- "${BASH_SOURCE[0]}")/environment"
+mkdir -p coverage
+: > coverage/lcov.info
+# Measure each real module in its own test process. Native ESM mocks otherwise
+# contribute synthetic source records to Node's coverage totals.
+for source in src/*.ts src/functions/*.ts; do
+  name="$(basename "$source" .ts)"
+  test_file="__tests__/$name.test.ts"
+  test -f "$test_file"
+  node --experimental-test-module-mocks --experimental-test-coverage --test \
+    "--test-coverage-include=$source" \
+    --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 \
+    --test-reporter=spec --test-reporter=lcov \
+    --test-reporter-destination=stdout "--test-reporter-destination=coverage/$name.lcov" \
+    "$test_file"
+  cat "coverage/$name.lcov" >> coverage/lcov.info
+done
