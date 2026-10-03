@@ -9,6 +9,8 @@ on:
   schedule:
     - cron: '35 2 * * 5'
 
+cache-mode: none
+
 jobs:
   analyze:
     name: Analyze
@@ -31,6 +33,8 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3 # pin@v4.37.6
       with:
+        trap-caching: false
+        dependency-caching: false
         languages: ${{ matrix.language }}
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).

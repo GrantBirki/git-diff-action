@@ -10,6 +10,8 @@ permissions:
   contents: read
   pull-requests: write # enable write permissions for pull request comments
 
+cache-mode: none
+
 jobs:
   json-yaml-validate:
     runs-on: ubuntu-latest
