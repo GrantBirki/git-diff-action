@@ -8,7 +8,7 @@ script/all
 script/verify-bundle
 ```
 
-`script/bootstrap` installs the exact lockfile with lifecycle scripts disabled and uses Socket Firewall when available. It stores downloaded artifacts in ignored `.npm/`. After a successful bootstrap, `script/bootstrap --offline` can reconstruct `node_modules` from that cache. Checks, tests, acceptance, and builds use local tools and do not download packages. The cache and Node runtime are not vendored, so a fresh checkout still needs an initial online bootstrap.
+`script/bootstrap` installs the exact lockfile with lifecycle scripts disabled and uses Socket Firewall when available. It verifies installed package versions against the lockfile before succeeding and stores downloaded artifacts in ignored `.npm/`. After a successful bootstrap, `script/bootstrap --offline` can reconstruct `node_modules` from that cache. The offline flag applies to npm package access, and Socket Firewall may still need its security service. Checks, tests, acceptance, and builds use local tools and do not download packages. The cache and Node runtime are not vendored, so a fresh checkout still needs an initial online bootstrap.
 
 Local development and CI share these entrypoints. The `npm run` aliases remain available:
 
