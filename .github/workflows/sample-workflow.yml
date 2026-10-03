@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Need to checkout for testing the Action in this repo
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # needed to checkout all branches
 
@@ -38,7 +38,7 @@ jobs:
         run: cat $DIFF
 
       # Upload the json diff as an artifact
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: json-diff
           path: diff.json
