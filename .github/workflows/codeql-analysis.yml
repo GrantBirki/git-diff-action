@@ -9,6 +9,8 @@ on:
   schedule:
     - cron: '35 2 * * 5'
 
+cache-mode: none
+
 jobs:
   analyze:
     name: Analyze
