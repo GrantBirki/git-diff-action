@@ -146,8 +146,7 @@ test('standalone bundle runs real Git with spaces in path and file-only outputs'
     const parsed: {files: Array<{path: string}>} = JSON.parse(
       readFileSync(join(action.workspace, 'diff.json'), 'utf8')
     )
-    // Preserve parse-git-diff's existing trailing-tab behavior for spaced paths.
-    assert.equal(parsed.files[0]?.path, 'space name.txt\t')
+    assert.equal(parsed.files[0]?.path, 'space name.txt')
     assert.match(
       readFileSync(join(action.workspace, 'raw.txt'), 'utf8'),
       /after 雪/

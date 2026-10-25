@@ -20,7 +20,7 @@ Local development and CI share these entrypoints. The `npm run` aliases remain a
 - `script/all` runs lint, unit tests, build, and acceptance.
 - `script/verify-bundle` rebuilds and rejects tracked or untracked changes in `dist/`. Run it after committing the generated files.
 
-Keep inputs, outputs, defaults, errors, and diff parsing compatible. The parser currently truncates some `--binary` diffs and retains a trailing tab for some paths containing spaces. Tests preserve these existing behaviors. Parser fixes should be separate, deliberate changes.
+Keep inputs, outputs, defaults, errors, and diff parsing compatible. The parser currently truncates some `--binary` diffs. Tests preserve this existing behavior. Parser fixes should be separate, deliberate changes.
 
 The only runtime package is `parse-git-diff`. TypeScript provides type checking, `@types/node` describes the supported runtime, Prettier provides formatting, and `ncc` produces the self-contained Action. The local Actions adapter implements only the string input/output and logging functions this repository uses. Its toolkit attribution is in `LICENSES/actions-toolkit.txt` and the generated distribution notices.
 

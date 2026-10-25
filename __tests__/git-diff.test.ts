@@ -106,6 +106,22 @@ for (const [file, count, rawCount] of [
   })
 }
 
+test('strips the trailing tab git adds to paths with spaces', async () => {
+  process.env.INPUT_GIT_DIFF_FILE = '__tests__/fixtures/paths-with-spaces.diff'
+  const result = await gitDiff()
+  assert.deepEqual(
+    result?.files.map(file =>
+      'path' in file ? file.path : [file.pathBefore, file.pathAfter]
+    ),
+    [
+      'added file.txt',
+      'changed file.txt',
+      'deleted file.txt',
+      ['old name.txt', 'new name.txt']
+    ]
+  )
+})
+
 for (const [value, expected] of [
   ['', []],
   ['   ', []],
