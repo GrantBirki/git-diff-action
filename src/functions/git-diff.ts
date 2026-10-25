@@ -1,5 +1,5 @@
 import * as core from '../actions-core.ts'
-import parseGitDiff from 'parse-git-diff'
+import parseGitDiff, {type GitDiff} from 'parse-git-diff'
 import {execFileAsync} from './exec-async.ts'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -137,6 +137,17 @@ function resolveWorkspacePath(filePath: string) {
   )
 }
 
+// git appends a tab to `---` and `+++` paths that contain spaces, and
+// parse-git-diff keeps that tab in the parsed path
+function stripPathTrailingTabs(diff: GitDiff) {
+  for (const file of diff.files) {
+    if ('path' in file && file.path.endsWith('\t')) {
+      file.path = file.path.slice(0, -1)
+    }
+  }
+  return diff
+}
+
 // Helper function to get the diff from the git command
 // :returns: The diff object which is parsed git diff
 // If an error occurs, setFailed is called and it returns null
@@ -214,7 +225,7 @@ export async function gitDiff() {
     }
 
     // JSON diff
-    const diff = parseGitDiff(rawGitDiff)
+    const diff = stripPathTrailingTabs(parseGitDiff(rawGitDiff))
     const jsonDiff = JSON.stringify(diff)
 
     // log the total amount of files changed in the json diff
